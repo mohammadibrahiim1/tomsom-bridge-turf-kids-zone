@@ -1,0 +1,110 @@
+export interface TurfInfo {
+  id?: string;
+  name: string;
+  size: string;
+  turfType: string;
+  lighting: string;
+  capacity: string;
+  description: string;
+  slotDurationMinutes: number;
+  gameDurationMinutes: number;
+  grassType?: string;
+  switchDurationMinutes: number;
+  openingTime: string;
+  closingTime: string;
+  primaryImage: string;
+  bannerImages: string[];
+}
+
+export interface KidsZoneInfo {
+  id?: string;
+  title: string;
+  subtitle?: string;
+  ageRange?: string;
+  description: string;
+  ageLimit: string;
+  entryFee: number;
+  openingTime: string;
+  closingTime: string;
+  features: string[];
+  rules: string[];
+  images: string[];
+  isBookingEnabled: boolean;
+}
+
+export interface WebsiteSettings {
+  websiteNameBn: string;
+  websiteNameEn: string;
+  tagline: string;
+  logoUrl: string;
+  faviconUrl: string;
+  heroHeadline: string;
+  heroSubheadLine: string;
+  heroImage: string;
+  heroBadge: string;
+  topBarText?: string;
+  isTopBarActive?: boolean;
+  headerBookingBtnText?: string;
+  headerSearchBtnText?: string;
+  heroBookingBtnText?: string;
+  heroKidsBtnText?: string;
+  footerAboutText?: string;
+  footerCopyrightText?: string;
+  footerNoticeText?: string;
+  phone: string;
+  phoneSecondary?: string;
+  whatsapp: string;
+  email: string;
+  addressBn: string;
+  addressEn: string;
+  locationLandmark: string;
+  googleMapEmbedUrl: string;
+  googleMapDirectLink: string;
+  facebookPageUrl: string;
+  instagramUrl?: string;
+  youtubeUrl?: string;
+  currencySymbol: string;
+  timezone: string;
+  regularPrice: number;
+  nightPrice: number;
+  weekendPrice: number;
+  cancellationNoticeDays: number;
+  cancellationPolicyText: string;
+  rulesList: string[];
+  bkashNumber: string;
+  bkashType: 'Merchant' | 'Personal' | 'Agent';
+  nagadNumber: string;
+  nagadType: 'Merchant' | 'Personal' | 'Agent';
+  rocketNumber: string;
+  rocketType: 'Merchant' | 'Personal' | 'Agent';
+  cashInstruction: string;
+  receiptHeaderTitle?: string;
+  receiptHeaderSubtitle?: string;
+  receiptContactText?: string;
+  receiptFooterRules?: string[];
+  receiptFooterNote?: string;
+  receiptAuthorizedSealText?: string;
+  sectionVisibility: {
+    hero: boolean;
+    quickBooking: boolean;
+    about: boolean;
+    turf: boolean;
+    kidsZone: boolean;
+    facilities: boolean;
+    pricing: boolean;
+    slots: boolean;
+    offers: boolean;
+    gallery: boolean;
+    events: boolean;
+    reviews: boolean;
+    faq: boolean;
+    location: boolean;
+    contact: boolean;
+  };
+  seo: {
+    metaTitle: string;
+    metaDescription: string;
+    keywords: string;
+    ogImage: string;
+  };
+}
