@@ -1,19 +1,22 @@
 export interface TurfInfo {
   id?: string;
-  name: string;
-  size: string;
-  turfType: string;
-  lighting: string;
-  capacity: string;
-  description: string;
-  slotDurationMinutes: number;
-  gameDurationMinutes: number;
+  name?: string;
+  size?: string;
+  turfType?: string;
+  lighting?: string;
+  capacity?: string;
+  description?: string;
+  slotDurationMinutes?: number;
+  gameDurationMinutes?: number;
   grassType?: string;
-  switchDurationMinutes: number;
-  openingTime: string;
-  closingTime: string;
-  primaryImage: string;
-  bannerImages: string[];
+  switchDurationMinutes?: number;
+  openingTime?: string;
+  closingTime?: string;
+  primaryImage?: string;
+  bannerImages?: string[];
+
+  floodlights?: string;
+  openingHours?: string;
 }
 
 export interface KidsZoneInfo {
@@ -33,15 +36,15 @@ export interface KidsZoneInfo {
 }
 
 export interface WebsiteSettings {
-  websiteNameBn: string;
-  websiteNameEn: string;
-  tagline: string;
-  logoUrl: string;
-  faviconUrl: string;
-  heroHeadline: string;
-  heroSubheadLine: string;
-  heroImage: string;
-  heroBadge: string;
+  websiteNameBn?: string;
+  websiteNameEn?: string;
+  tagline?: string;
+  logoUrl?: string;
+  faviconUrl?: string;
+  heroHeadline?: string;
+  heroSubheadLine?: string;
+  heroImage?: string;
+  heroBadge?: string;
   topBarText?: string;
   isTopBarActive?: boolean;
   headerBookingBtnText?: string;
@@ -51,40 +54,40 @@ export interface WebsiteSettings {
   footerAboutText?: string;
   footerCopyrightText?: string;
   footerNoticeText?: string;
-  phone: string;
+  phone?: string;
   phoneSecondary?: string;
-  whatsapp: string;
-  email: string;
-  addressBn: string;
-  addressEn: string;
-  locationLandmark: string;
-  googleMapEmbedUrl: string;
-  googleMapDirectLink: string;
-  facebookPageUrl: string;
+  whatsapp?: string;
+  email?: string;
+  addressBn?: string;
+  addressEn?: string;
+  locationLandmark?: string;
+  googleMapEmbedUrl?: string;
+  googleMapDirectLink?: string;
+  facebookPageUrl?: string;
   instagramUrl?: string;
   youtubeUrl?: string;
-  currencySymbol: string;
-  timezone: string;
-  regularPrice: number;
-  nightPrice: number;
-  weekendPrice: number;
-  cancellationNoticeDays: number;
-  cancellationPolicyText: string;
-  rulesList: string[];
-  bkashNumber: string;
-  bkashType: 'Merchant' | 'Personal' | 'Agent';
-  nagadNumber: string;
-  nagadType: 'Merchant' | 'Personal' | 'Agent';
-  rocketNumber: string;
-  rocketType: 'Merchant' | 'Personal' | 'Agent';
-  cashInstruction: string;
+  currencySymbol?: string;
+  timezone?: string;
+  regularPrice?: number;
+  nightPrice?: number;
+  weekendPrice?: number;
+  cancellationNoticeDays?: number;
+  cancellationPolicyText?: string;
+  rulesList?: string[];
+  bkashNumber?: string;
+  bkashType?: 'Merchant' | 'Personal' | 'Agent';
+  nagadNumber?: string;
+  nagadType?: 'Merchant' | 'Personal' | 'Agent';
+  rocketNumber?: string;
+  rocketType?: 'Merchant' | 'Personal' | 'Agent';
+  cashInstruction?: string;
   receiptHeaderTitle?: string;
   receiptHeaderSubtitle?: string;
   receiptContactText?: string;
   receiptFooterRules?: string[];
   receiptFooterNote?: string;
   receiptAuthorizedSealText?: string;
-  sectionVisibility: {
+  sectionVisibility?: {
     hero: boolean;
     quickBooking: boolean;
     about: boolean;
@@ -101,7 +104,7 @@ export interface WebsiteSettings {
     location: boolean;
     contact: boolean;
   };
-  seo: {
+  seo?: {
     metaTitle: string;
     metaDescription: string;
     keywords: string;

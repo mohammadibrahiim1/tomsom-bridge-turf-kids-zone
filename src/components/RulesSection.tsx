@@ -3,7 +3,7 @@ import { ShieldCheck, AlertOctagon, Clock, RefreshCw, CheckCircle2 } from 'lucid
 import type { WebsiteSettings } from '../types';
 
 interface RulesSectionProps {
-  settings: WebsiteSettings;
+  settings?: WebsiteSettings;
 }
 
 export const RulesSection: React.FC<RulesSectionProps> = ({ settings }) => {

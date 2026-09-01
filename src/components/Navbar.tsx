@@ -76,11 +76,36 @@ export const Navbar: React.FC<NavbarProps> = ({
   }, []);
 
   const navItems = [
-    { id: 'kids-zone', label: 'কিডস জোন', icon: Sparkles, path: '/#kids-zone' },
-    { id: 'pricing', label: 'মূল্য তালিকা', icon: Tag, path: '/#pricing' },
-    { id: 'about', label: 'আমাদের সম্পর্কে', icon: Info, path: '/#about' },
-    { id: 'gallery', label: 'গ্যালারি', icon: Images, path: '/#gallery' },
-    { id: 'contact', label: 'যোগাযোগ', icon: Mail, path: '/#contact' },
+    {
+      id: 'kids-zone',
+      label: 'কিডস জোন',
+      icon: Sparkles,
+      path: '/kids-zone',
+    },
+    {
+      id: 'pricing',
+      label: 'মূল্য তালিকা',
+      icon: Tag,
+      path: '/pricing',
+    },
+    {
+      id: 'about',
+      label: 'আমাদের সম্পর্কে',
+      icon: Info,
+      path: '/about-us',
+    },
+    {
+      id: 'gallery',
+      label: 'গ্যালারি',
+      icon: Images,
+      path: '/gallery',
+    },
+    {
+      id: 'contact',
+      label: 'যোগাযোগ',
+      icon: Mail,
+      path: '/contact',
+    },
   ];
 
   const bottomTabRoutes = ['kids-zone', 'pricing', 'gallery'];
@@ -225,13 +250,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                   {settings.headerSearchBtnText || 'অনুসন্ধান'}
                 </button>
 
-                <button
+                <Link
+                  to='/booking'
                   onClick={handleBooking}
                   className='inline-flex items-center px-4 py-2 bg-[#990000] hover:bg-[#800000] active:scale-95 text-white font-bold text-xs rounded-md shadow-md hover:shadow-red-900/25 transition-all cursor-pointer'
                 >
                   <CalendarCheck className='w-4 h-4 mr-1.5' />
                   {settings.headerBookingBtnText || 'এখনই বুক করুন'}
-                </button>
+                </Link>
 
                 {/* Desktop User Profile Dropdown with Framer Motion */}
                 {currentUser ? (
@@ -378,13 +404,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               {settings.headerSearchBtnText || 'অনুসন্ধান'}
             </button>
 
-            <button
+            <Link
+              to={'/booking'}
               onClick={handleBooking}
               className='flex-1 inline-flex items-center justify-center px-3 py-2 bg-[#990000] hover:bg-[#800000] text-white font-bold text-xs rounded-md shadow-xs transition-all cursor-pointer'
             >
               <CalendarCheck className='w-3.5 h-3.5 mr-1.5' />
               {settings.headerBookingBtnText || 'এখনই বুক করুন'}
-            </button>
+            </Link>
           </div>
         </div>
       </header>
@@ -426,7 +453,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
               {/* Navigation Items List */}
               <div className='grid grid-cols-1 gap-1.5'>
-                {navItems.map((item) => {
+                {navItems?.map((item) => {
                   const IconComponent = item.icon;
                   return (
                     <Link
