@@ -72,14 +72,6 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 
       {/* User Actions & Profile Dropdown */}
       <div className='flex items-center gap-3'>
-        <button
-          onClick={() => window.open('/', '_blank')}
-          className='hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold rounded-lg border border-slate-700/60 transition-colors cursor-pointer'
-        >
-          <Globe className='w-3.5 h-3.5 text-emerald-400' />
-          <span>লাইভ সাইট</span>
-        </button>
-
         <div className='h-4 w-px bg-slate-800 hidden sm:block' />
 
         {/* Profile Dropdown Container */}
