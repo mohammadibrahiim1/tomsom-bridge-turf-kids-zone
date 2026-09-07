@@ -1,16 +1,24 @@
 import React from 'react';
 import { X } from 'lucide-react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { useNavigate, Outlet } from '@tanstack/react-router';
 
 export const AuthModalLayout: React.FC = () => {
   const navigate = useNavigate();
 
   const handleClose = () => {
-    navigate('/');
+    // স্মার্ট ক্লোজ: পূর্বের পেইজ ব্যাকগ্রাউন্ডে থাকলে ব্যাক করবে, না হলে হোম পেইজে নিয়ে যাবে
+    if (window.history.length > 2) {
+      window.history.back();
+    } else {
+      navigate({ to: '/', replace: true });
+    }
   };
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity animate-fadeIn'>
+    <div
+      className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity animate-fadeIn'
+      onClick={handleClose}
+    >
       <div
         className='relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100 transform transition-all'
         onClick={(e) => e.stopPropagation()}

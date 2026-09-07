@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lock, User, AlertCircle, Loader2, UserPlus, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Lock, User, AlertCircle, CheckCircle2, Loader2, UserPlus, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { useLoginModal } from '../hooks/useLogin';
 
 export interface LoginFormProps {
@@ -20,6 +20,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     handleSubmit,
     errors,
     errorMessage,
+    successMessage,
     showPassword,
     toggleShowPassword,
     isLoginLoading,
@@ -30,16 +31,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     onClose,
     onOpenRegister: onSwitchToRegister,
     onForgotPassword: onSwitchToResetPassword,
+    onSuccess,
   });
 
   const handleFormSubmit = async (data: any) => {
     await onSubmit(data);
-    if (onSuccess) onSuccess();
   };
 
   return (
     <div className='space-y-6'>
-      {/* Form Header */}
+      {/* Header */}
       <div className='text-center space-y-1'>
         <p className='text-xl font-black tracking-tight text-slate-900'>টমছম ব্রিজ টার্ফ ও কিডস জোন</p>
         <h3 className='text-sm text-slate-500 font-medium '>লগইন করুন</h3>
@@ -53,9 +54,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         </div>
       )}
 
-      {/* Form */}
+      {/* Success Alert */}
+      {successMessage && (
+        <div className='p-3.5 bg-emerald-50 text-emerald-700 border border-emerald-200/80 rounded-md text-sm font-semibold flex items-center space-x-2.5 animate-in fade-in'>
+          <CheckCircle2 className='w-4 h-4 text-emerald-600 shrink-0' />
+          <span>{successMessage}</span>
+        </div>
+      )}
+
+      {/* Form Elements */}
       <form onSubmit={handleSubmit(handleFormSubmit)} className='space-y-4'>
-        {/* Username / Email / Phone Field */}
         <div>
           <label className='block text-sm font-bold text-slate-700 uppercase tracking-wider mb-1.5'>
             ইমেইল বা ইউজারনেম *
@@ -74,7 +82,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           )}
         </div>
 
-        {/* Password Field */}
         <div>
           <div className='flex items-center justify-between mb-1.5 gap-2'>
             <label className='block text-sm font-bold text-slate-700 uppercase tracking-wider shrink-0'>
@@ -109,10 +116,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           )}
         </div>
 
-        {/* Submit Button */}
         <button
           type='submit'
-          disabled={isLoginLoading}
+          disabled={isLoginLoading || !!successMessage}
           className='w-full py-3.5 mt-2 bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-700 hover:to-red-800 active:scale-[0.99] text-white font-bold text-sm rounded-md shadow-lg shadow-red-600/25 hover:shadow-red-600/40 transition-all duration-200 flex items-center justify-center cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed'
         >
           {isLoginLoading ? (
@@ -126,7 +132,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         </button>
       </form>
 
-      {/* Registration Footer */}
       <div className='pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2'>
         <span className='text-sm text-slate-500 font-medium'>নতুন অ্যাকাউন্ট তৈরি করতে চান?</span>
         <button

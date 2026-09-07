@@ -1,19 +1,28 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../redux/store/store';
-import { AuthMode, closeAuthModal, openAuthModal, switchAuthMode } from '../redux/features/modal/modalSlice';
+import { useNavigate, useSearch } from '@tanstack/react-router';
+import { AuthMode } from '../redux/features/modal/modalSlice';
 
 export const useAuthModal = () => {
-  const dispatch = useDispatch();
-  const { isAuthModalOpen, authMode } = useSelector((state: RootState) => state.modal);
+  const navigate = useNavigate();
+
+  const search = useSearch({ strict: false }) as { authModal?: AuthMode };
 
   return {
-    isOpen: isAuthModalOpen,
-    mode: authMode,
+    isOpen: !!search.authModal,
+    mode: search.authModal || 'login',
 
-    open: (mode?: AuthMode) => dispatch(openAuthModal(mode)),
+    open: (mode: AuthMode = 'login') =>
+      navigate({
+        search: (prev: any) => ({ ...prev, authModal: mode }),
+      }),
 
-    close: () => dispatch(closeAuthModal()),
+    close: () =>
+      navigate({
+        search: (prev: any) => ({ ...prev, authModal: undefined }),
+      }),
 
-    switchMode: (mode: AuthMode) => dispatch(switchAuthMode(mode)),
+    switchMode: (mode: AuthMode) =>
+      navigate({
+        search: (prev: any) => ({ ...prev, authModal: mode }),
+      }),
   };
 };

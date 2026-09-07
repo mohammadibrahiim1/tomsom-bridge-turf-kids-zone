@@ -1,5 +1,5 @@
-import { RouterProvider } from 'react-router-dom';
-import { router } from './routes';
+import { RouterProvider } from '@tanstack/react-router';
+import { router } from './routes/router';
 import { AuthInitializer } from './components/AuthInitializer/AuthInitializer';
 
 export default function App() {

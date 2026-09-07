@@ -1,44 +1,42 @@
-import React, { useEffect } from 'react';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../redux/store/store';
-import { openAuthModal } from '../redux/features/modal/modalSlice';
-import { Loader2 } from 'lucide-react';
+import { createRoute, redirect, Outlet } from '@tanstack/react-router';
 import { Role } from '../types';
+import { rootRoute } from './router';
 
-interface ProtectedRouteProps {
+interface GuardOptions {
   allowedRoles?: Role[];
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
-  const { user, isAuthenticated, isInitialLoading, isMustChangePassword } = useAppSelector((state) => state.auth);
-  const location = useLocation();
-  const dispatch = useAppDispatch();
+export const ProtectedRoute = (id: string, options?: GuardOptions) => {
+  return createRoute({
+    getParentRoute: () => rootRoute,
+    id,
+    beforeLoad: async ({ context, location }) => {
+      const auth = (context as any)?.auth;
+      const user = auth?.user;
+      const isAuthenticated = auth?.isAuthenticated;
+      const isMustChangePassword = auth?.isMustChangePassword;
 
-  useEffect(() => {
-    if (!isInitialLoading && !isAuthenticated) {
-      dispatch(openAuthModal('login'));
-    }
-  }, [isInitialLoading, isAuthenticated, dispatch]);
+      // 1. Unauthenticated User Check
+      if (!isAuthenticated || !user) {
+        throw redirect({
+          to: '/login',
+        });
+      }
 
-  if (isInitialLoading) {
-    return (
-      <div className='flex min-h-screen items-center justify-center bg-slate-900 text-white'>
-        <Loader2 className='h-8 w-8 animate-spin text-red-600' />
-      </div>
-    );
-  }
+      // 2. Must Change Password Check
+      if (isMustChangePassword && location.pathname !== '/change-password') {
+        throw redirect({
+          to: '/change-password',
+        });
+      }
 
-  if (!isAuthenticated || !user) {
-    return <Navigate to='/' state={{ from: location }} replace />;
-  }
-
-  if (isMustChangePassword && location.pathname !== '/change-password') {
-    return <Navigate to='/change-password' replace />;
-  }
-
-  if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
-    return <Navigate to='/unauthorized' replace />;
-  }
-
-  return <Outlet />;
+      // 3. Role-Based Access Control (RBAC) Check
+      if (options?.allowedRoles && options.allowedRoles.length > 0 && !options.allowedRoles.includes(user.role)) {
+        throw redirect({
+          to: '/unauthorized',
+        });
+      }
+    },
+    component: () => <Outlet />,
+  });
 };

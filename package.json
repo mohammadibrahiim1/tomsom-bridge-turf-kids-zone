@@ -16,6 +16,7 @@
     "@hookform/resolvers": "^5.9.1",
     "@reduxjs/toolkit": "^2.12.0",
     "@tailwindcss/vite": "^4.1.14",
+    "@tanstack/react-router": "^1.170.33",
     "@vitejs/plugin-react": "^5.0.4",
     "canvas-confetti": "^1.9.4",
     "cors": "^2.8.6",
@@ -30,7 +31,6 @@
     "react-dom": "^19.0.1",
     "react-hook-form": "^7.87.0",
     "react-redux": "^9.3.0",
-    "react-router-dom": "^7.18.3",
     "vite": "^6.2.3",
     "zod": "^4.5.4"
   },

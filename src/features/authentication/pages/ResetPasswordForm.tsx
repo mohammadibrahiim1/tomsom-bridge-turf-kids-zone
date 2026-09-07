@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { User, Lock, AlertCircle, Loader2, ArrowRight, Eye, EyeOff, CheckCircle2, KeyRound, LogIn } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useResetPasswordMutation, useVerifyUserMutation } from '../services/authApi/authApi';
+import { useNavigate } from '@tanstack/react-router';
 
 // Step 1 Schema
 const verifySchema = z.object({
@@ -61,7 +61,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onSwitchTo
     if (onSwitchToLogin) {
       onSwitchToLogin();
     } else {
-      navigate('/login');
+      navigate({ to: '/login' });
     }
   };
 

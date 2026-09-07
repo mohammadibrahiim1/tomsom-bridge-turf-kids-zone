@@ -15,7 +15,6 @@ interface AuthModalProps {
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen: propIsOpen, mode: propMode, onClose: propOnClose }) => {
   const dispatch = useDispatch();
-
   const { isAuthModalOpen, authMode } = useSelector((state: RootState) => state.modal);
 
   const isOpen = propIsOpen ?? isAuthModalOpen;
@@ -31,8 +30,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen: propIsOpen, mode: 
     }
   };
 
+  // 🔴 পরম সমাধান: ১.২ সেকেন্ড সাকসেস মেসেজ রাখার পর মডাল ক্লোজ করা
+  const handleSuccess = () => {
+    setTimeout(() => {
+      handleClose();
+    }, 1200);
+  };
+
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity animate-fadeIn'>
+    <div
+      className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity animate-fadeIn'
+      onClick={handleClose}
+    >
       <div
         className='relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 transform transition-all'
         onClick={(e) => e.stopPropagation()}
@@ -50,16 +59,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen: propIsOpen, mode: 
             <LoginForm
               onSwitchToRegister={() => dispatch(switchAuthMode('register'))}
               onSwitchToResetPassword={() => dispatch(switchAuthMode('reset-password'))}
-              onSuccess={handleClose}
+              onSuccess={handleSuccess}
             />
           )}
 
           {currentMode === 'register' && (
-            <RegisterForm onSwitchToLogin={() => dispatch(switchAuthMode('login'))} onSuccess={handleClose} />
+            <RegisterForm onSwitchToLogin={() => dispatch(switchAuthMode('login'))} onSuccess={handleSuccess} />
           )}
 
           {currentMode === 'reset-password' && (
-            <ResetPasswordForm onSwitchToLogin={() => dispatch(switchAuthMode('login'))} onSuccess={handleClose} />
+            <ResetPasswordForm onSwitchToLogin={() => dispatch(switchAuthMode('login'))} onSuccess={handleSuccess} />
           )}
         </div>
       </div>

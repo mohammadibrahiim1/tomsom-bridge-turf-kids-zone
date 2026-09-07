@@ -16,6 +16,13 @@ export interface User {
   avatarUrl?: string;
 }
 
+export interface PasswordResetResponse {
+  success: boolean;
+  message: string;
+  resetCode?: string;
+  resetCodeExpiresAt?: string;
+}
+
 export interface AdminUser extends User {
   email: string; // Email mandatory for admin/staff
   passwordHash?: string;

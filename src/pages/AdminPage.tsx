@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { 
-  ShieldCheck, 
-  Lock, 
-  User, 
-  KeyRound, 
-  AlertCircle, 
-  Loader2, 
-  CheckCircle2, 
-  Mail, 
+import {
+  ShieldCheck,
+  Lock,
+  User,
+  KeyRound,
+  AlertCircle,
+  Loader2,
+  CheckCircle2,
+  Mail,
   ArrowLeft,
   Key,
-  Globe
+  Globe,
 } from 'lucide-react';
 import { api } from '../services/api';
 import type { AdminUser, WebsiteSettings } from '../types';
@@ -36,17 +36,17 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   settings,
 }) => {
   const [mode, setMode] = useState<AuthMode>('login');
-  
+
   // Login fields
   const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('');
-  
+
   // Forgot password fields
   const [recoveryIdentity, setRecoveryIdentity] = useState('');
   const [resetCode, setResetCode] = useState('');
   const [resetNewPassword, setResetNewPassword] = useState('');
   const [resetConfirmPassword, setResetConfirmPassword] = useState('');
-  
+
   // Status states
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -61,13 +61,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
   // If already logged in as Admin, show Admin Dashboard view
   if (currentUser) {
-    return (
-      <AdminDashboard
-        currentUser={currentUser}
-        onLogout={onLogout}
-        onRefreshPublicData={onRefreshPublicData}
-      />
-    );
+    return <AdminDashboard currentUser={currentUser} onLogout={onLogout} onRefreshPublicData={onRefreshPublicData} />;
   }
 
   const resetAllStates = () => {
@@ -102,32 +96,32 @@ export const AdminPage: React.FC<AdminPageProps> = ({
     }
   };
 
-  const handleRequestResetCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    resetAllStates();
+  // const handleRequestResetCode = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   resetAllStates();
 
-    if (!recoveryIdentity.trim()) {
-      setErrorMessage('ইউজারনেম বা ইমেইল প্রদান করুন।');
-      return;
-    }
+  //   if (!recoveryIdentity.trim()) {
+  //     setErrorMessage('ইউজারনেম বা ইমেইল প্রদান করুন।');
+  //     return;
+  //   }
 
-    setIsLoading(true);
-    try {
-      const res = await api.forgotPassword(recoveryIdentity.trim());
-      if (res.success) {
-        setSuccessMessage(`ভেরিফিকেশন কোড পাঠানো হয়েছে।`);
-        if (res.resetCode) {
-          setGeneratedCodeHint(res.resetCode);
-          setResetCode(res.resetCode);
-        }
-        setMode('forgot_reset');
-      }
-    } catch (err: any) {
-      setErrorMessage(err.message || 'পাসওয়ার্ড রিসেট কোড পাঠাতে ব্যর্থ হয়েছে।');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //   setIsLoading(true);
+  //   try {
+  //     const res = await api.forgotPassword(recoveryIdentity.trim());
+  //     if (res.success) {
+  //       setSuccessMessage(`ভেরিফিকেশন কোড পাঠানো হয়েছে।`);
+  //       if (res.resetCode) {
+  //         setGeneratedCodeHint(res.resetCode);
+  //         setResetCode(res.resetCode);
+  //       }
+  //       setMode('forgot_reset');
+  //     }
+  //   } catch (err: any) {
+  //     setErrorMessage(err.message || 'পাসওয়ার্ড রিসেট কোড পাঠাতে ব্যর্থ হয়েছে।');
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const handleConfirmPasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -154,7 +148,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
         recoveryIdentity.trim(),
         resetCode.trim(),
         resetNewPassword,
-        resetConfirmPassword
+        resetConfirmPassword,
       );
 
       if (res.success) {
@@ -199,187 +193,181 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col justify-between p-4 sm:p-6 text-gray-100">
-      
+    <div className='min-h-screen bg-slate-900 flex flex-col justify-between p-4 sm:p-6 text-gray-100'>
       {/* Top Header */}
-      <div className="max-w-4xl w-full mx-auto flex items-center justify-between py-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center font-black text-white shadow-lg">
+      <div className='max-w-4xl w-full mx-auto flex items-center justify-between py-4'>
+        <div className='flex items-center space-x-3'>
+          <div className='w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center font-black text-white shadow-lg'>
             TB
           </div>
           <div>
-            <span className="font-black text-white text-base block">
+            <span className='font-black text-white text-base block'>
               {settings?.websiteNameBn || 'টমছম ব্রিজ টার্ফ'}
             </span>
-            <span className="text-2xs text-gray-400">সুপার অ্যাডমিন ড্যাশবোর্ড ও CMS</span>
+            <span className='text-2xs text-gray-400'>সুপার অ্যাডমিন ড্যাশবোর্ড ও CMS</span>
           </div>
         </div>
 
         <button
           onClick={onNavigateHome}
-          className="inline-flex items-center px-4 py-2 bg-slate-800 hover:bg-slate-700 text-gray-200 text-xs font-bold rounded-xl border border-slate-700 transition-colors cursor-pointer"
+          className='inline-flex items-center px-4 py-2 bg-slate-800 hover:bg-slate-700 text-gray-200 text-xs font-bold rounded-xl border border-slate-700 transition-colors cursor-pointer'
         >
-          <Globe className="w-3.5 h-3.5 mr-1.5 text-red-400" />
+          <Globe className='w-3.5 h-3.5 mr-1.5 text-red-400' />
           ওয়েবসাইটে ফিরে যান
         </button>
       </div>
 
       {/* Main Form Box */}
-      <div className="max-w-md w-full mx-auto my-8 bg-white text-gray-900 rounded-3xl shadow-2xl border border-slate-800 overflow-hidden">
-        
+      <div className='max-w-md w-full mx-auto my-8 bg-white text-gray-900 rounded-3xl shadow-2xl border border-slate-800 overflow-hidden'>
         {/* Box Header */}
-        <div className="p-6 bg-slate-950 text-white flex items-center space-x-3 border-b border-slate-800">
-          <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center font-bold text-white shadow-md">
-            <ShieldCheck className="w-6 h-6 text-white" />
+        <div className='p-6 bg-slate-950 text-white flex items-center space-x-3 border-b border-slate-800'>
+          <div className='w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center font-bold text-white shadow-md'>
+            <ShieldCheck className='w-6 h-6 text-white' />
           </div>
           <div>
-            <h2 className="text-lg font-black text-white">অ্যাডমিন সাইন ইন</h2>
-            <p className="text-2xs text-gray-400">নিরাপদ ইউজারনেম/ইমেইল ও পাসওয়ার্ড</p>
+            <h2 className='text-lg font-black text-white'>অ্যাডমিন সাইন ইন</h2>
+            <p className='text-2xs text-gray-400'>নিরাপদ ইউজারনেম/ইমেইল ও পাসওয়ার্ড</p>
           </div>
         </div>
 
         {/* Box Body */}
-        <div className="p-6 sm:p-8 space-y-5">
-          
+        <div className='p-6 sm:p-8 space-y-5'>
           {errorMessage && (
-            <div className="p-3.5 bg-red-50 text-red-700 border-l-4 border-red-600 rounded-r-xl text-xs font-bold flex items-center space-x-2">
-              <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+            <div className='p-3.5 bg-red-50 text-red-700 border-l-4 border-red-600 rounded-r-xl text-xs font-bold flex items-center space-x-2'>
+              <AlertCircle className='w-4 h-4 text-red-600 shrink-0' />
               <span>{errorMessage}</span>
             </div>
           )}
 
           {successMessage && (
-            <div className="p-3.5 bg-emerald-50 text-emerald-800 border-l-4 border-emerald-600 rounded-r-xl text-xs font-bold flex items-center space-x-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <div className='p-3.5 bg-emerald-50 text-emerald-800 border-l-4 border-emerald-600 rounded-r-xl text-xs font-bold flex items-center space-x-2'>
+              <CheckCircle2 className='w-4 h-4 text-emerald-600 shrink-0' />
               <span>{successMessage}</span>
             </div>
           )}
 
           {/* MODE 1: LOGIN */}
           {mode === 'login' && (
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleLogin} className='space-y-4'>
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
-                  ইউজারনেম বা ইমেইল *
-                </label>
-                <div className="relative">
+                <label className='block text-xs font-bold text-gray-700 uppercase mb-1.5'>ইউজারনেম বা ইমেইল *</label>
+                <div className='relative'>
                   <input
-                    type="text"
+                    type='text'
                     required
-                    id="admin-page-username"
-                    placeholder="admin অথবা yourname@email.com"
+                    id='admin-page-username'
+                    placeholder='admin অথবা yourname@email.com'
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-300 focus:border-red-600 focus:bg-white rounded-xl text-sm font-semibold outline-hidden transition-all"
+                    className='w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-300 focus:border-red-600 focus:bg-white rounded-xl text-sm font-semibold outline-hidden transition-all'
                   />
-                  <User className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
+                  <User className='w-4 h-4 text-gray-400 absolute left-3.5 top-3.5' />
                 </div>
               </div>
 
               <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-bold text-gray-700 uppercase">
-                    পাসওয়ার্ড *
-                  </label>
+                <div className='flex items-center justify-between mb-1.5'>
+                  <label className='block text-xs font-bold text-gray-700 uppercase'>পাসওয়ার্ড *</label>
                   <button
-                    type="button"
+                    type='button'
                     onClick={() => {
                       resetAllStates();
                       setRecoveryIdentity(username);
                       setMode('forgot_request');
                     }}
-                    className="text-xs font-bold text-red-600 hover:text-red-700 hover:underline cursor-pointer"
+                    className='text-xs font-bold text-red-600 hover:text-red-700 hover:underline cursor-pointer'
                   >
                     পাসওয়ার্ড ভুলে গেছেন?
                   </button>
                 </div>
-                <div className="relative">
+                <div className='relative'>
                   <input
-                    type="password"
+                    type='password'
                     required
-                    id="admin-page-password"
-                    placeholder="••••••••"
+                    id='admin-page-password'
+                    placeholder='••••••••'
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-300 focus:border-red-600 focus:bg-white rounded-xl text-sm font-semibold outline-hidden transition-all"
+                    className='w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-300 focus:border-red-600 focus:bg-white rounded-xl text-sm font-semibold outline-hidden transition-all'
                   />
-                  <Lock className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
+                  <Lock className='w-4 h-4 text-gray-400 absolute left-3.5 top-3.5' />
                 </div>
               </div>
 
               <button
-                type="submit"
-                id="admin-page-login-submit"
+                type='submit'
+                id='admin-page-login-submit'
                 disabled={isLoading}
-                className="w-full py-3.5 bg-red-600 hover:bg-red-700 active:scale-98 text-white font-bold text-sm rounded-xl shadow-md hover:shadow-red-600/25 transition-all flex items-center justify-center cursor-pointer"
+                className='w-full py-3.5 bg-red-600 hover:bg-red-700 active:scale-98 text-white font-bold text-sm rounded-xl shadow-md hover:shadow-red-600/25 transition-all flex items-center justify-center cursor-pointer'
               >
                 {isLoading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <Loader2 className='w-5 h-5 animate-spin' />
                 ) : (
                   <>
-                    <Lock className="w-4 h-4 mr-2" />
+                    <Lock className='w-4 h-4 mr-2' />
                     ড্যাশবোর্ডে লগইন করুন
                   </>
                 )}
               </button>
 
-              <div className="pt-4 border-t border-gray-100 text-center text-xs text-gray-500 space-y-1">
+              <div className='pt-4 border-t border-gray-100 text-center text-xs text-gray-500 space-y-1'>
                 <div>
-                  ডিফল্ট একাউন্ট: <code className="bg-gray-100 px-1.5 py-0.5 rounded font-bold text-gray-800">admin</code> | পাসওয়ার্ড: <code className="bg-gray-100 px-1.5 py-0.5 rounded font-bold text-gray-800">admin123</code>
+                  ডিফল্ট একাউন্ট:{' '}
+                  <code className='bg-gray-100 px-1.5 py-0.5 rounded font-bold text-gray-800'>admin</code> | পাসওয়ার্ড:{' '}
+                  <code className='bg-gray-100 px-1.5 py-0.5 rounded font-bold text-gray-800'>admin123</code>
                 </div>
-                <div className="text-2xs text-gray-400">
-                  সম্পূর্ণ সুরক্ষিত ও বাংলা ভাষায় পরিচালিত অ্যাডমিন পোর্টাল
-                </div>
+                <div className='text-2xs text-gray-400'>সম্পূর্ণ সুরক্ষিত ও বাংলা ভাষায় পরিচালিত অ্যাডমিন পোর্টাল</div>
               </div>
             </form>
           )}
 
           {/* MODE 2: FORGOT REQUEST */}
           {mode === 'forgot_request' && (
-            <form onSubmit={handleRequestResetCode} className="space-y-4">
-              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-900 space-y-1">
-                <div className="font-bold flex items-center">
-                  <KeyRound className="w-4 h-4 mr-1 text-red-600" />
+            <form
+              // onSubmit={handleRequestResetCode}
+              className='space-y-4'
+            >
+              <div className='p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-900 space-y-1'>
+                <div className='font-bold flex items-center'>
+                  <KeyRound className='w-4 h-4 mr-1 text-red-600' />
                   পাসওয়ার্ড পুনরুদ্ধার:
                 </div>
                 <p>আপনার অ্যাডমিন ইউজারনেম বা ইমেইল প্রদান করুন। তাৎক্ষণিক ৬ ডিজিট ওটিপি কোড পাঠানো হবে।</p>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
-                  ইউজারনেম বা ইমেইল *
-                </label>
-                <div className="relative">
+                <label className='block text-xs font-bold text-gray-700 uppercase mb-1.5'>ইউজারনেম বা ইমেইল *</label>
+                <div className='relative'>
                   <input
-                    type="text"
+                    type='text'
                     required
-                    placeholder="admin অথবা email@domain.com"
+                    placeholder='admin অথবা email@domain.com'
                     value={recoveryIdentity}
                     onChange={(e) => setRecoveryIdentity(e.target.value)}
-                    className="w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-300 focus:border-red-600 rounded-xl text-sm font-semibold outline-hidden"
+                    className='w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-300 focus:border-red-600 rounded-xl text-sm font-semibold outline-hidden'
                   />
-                  <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
+                  <Mail className='w-4 h-4 text-gray-400 absolute left-3.5 top-3.5' />
                 </div>
               </div>
 
               <button
-                type="submit"
+                type='submit'
                 disabled={isLoading}
-                className="w-full py-3.5 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center cursor-pointer"
+                className='w-full py-3.5 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center cursor-pointer'
               >
-                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'ওটিপি ভেরিফিকেশন কোড পান'}
+                {isLoading ? <Loader2 className='w-5 h-5 animate-spin' /> : 'ওটিপি ভেরিফিকেশন কোড পান'}
               </button>
 
-              <div className="text-center pt-2">
+              <div className='text-center pt-2'>
                 <button
-                  type="button"
+                  type='button'
                   onClick={() => {
                     resetAllStates();
                     setMode('login');
                   }}
-                  className="inline-flex items-center text-xs font-bold text-gray-600 hover:text-red-600 cursor-pointer"
+                  className='inline-flex items-center text-xs font-bold text-gray-600 hover:text-red-600 cursor-pointer'
                 >
-                  <ArrowLeft className="w-3.5 h-3.5 mr-1" />
+                  <ArrowLeft className='w-3.5 h-3.5 mr-1' />
                   লগইন পেজে ফিরে যান
                 </button>
               </div>
@@ -388,85 +376,85 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
           {/* MODE 3: FORGOT RESET */}
           {mode === 'forgot_reset' && (
-            <form onSubmit={handleConfirmPasswordReset} className="space-y-4">
+            <form onSubmit={handleConfirmPasswordReset} className='space-y-4'>
               {generatedCodeHint && (
-                <div className="p-3.5 bg-emerald-50 border border-emerald-300 rounded-xl text-xs text-emerald-950 space-y-1">
-                  <div className="font-bold flex items-center text-emerald-800">
-                    <Key className="w-4 h-4 mr-1 text-emerald-600" />
+                <div className='p-3.5 bg-emerald-50 border border-emerald-300 rounded-xl text-xs text-emerald-950 space-y-1'>
+                  <div className='font-bold flex items-center text-emerald-800'>
+                    <Key className='w-4 h-4 mr-1 text-emerald-600' />
                     আপনার ৬-ডিজিট ওটিপি কোড:
                   </div>
-                  <div className="text-lg font-black tracking-widest text-emerald-700 bg-white py-1.5 px-3 rounded-lg border border-emerald-200 text-center font-mono">
+                  <div className='text-lg font-black tracking-widest text-emerald-700 bg-white py-1.5 px-3 rounded-lg border border-emerald-200 text-center font-mono'>
                     {generatedCodeHint}
                   </div>
                 </div>
               )}
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
+                <label className='block text-xs font-bold text-gray-700 uppercase mb-1.5'>
                   ৬-ডিজিট ভেরিফিকেশন কোড *
                 </label>
                 <input
-                  type="text"
+                  type='text'
                   required
-                  placeholder="যেমন: 123456"
+                  placeholder='যেমন: 123456'
                   value={resetCode}
                   onChange={(e) => setResetCode(e.target.value)}
-                  className="w-full px-3.5 py-3 bg-gray-50 border border-gray-300 focus:border-red-600 rounded-xl text-sm font-black tracking-widest outline-hidden text-center"
+                  className='w-full px-3.5 py-3 bg-gray-50 border border-gray-300 focus:border-red-600 rounded-xl text-sm font-black tracking-widest outline-hidden text-center'
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
+                <label className='block text-xs font-bold text-gray-700 uppercase mb-1.5'>
                   নতুন পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর) *
                 </label>
-                <div className="relative">
+                <div className='relative'>
                   <input
-                    type="password"
+                    type='password'
                     required
-                    placeholder="••••••••"
+                    placeholder='••••••••'
                     value={resetNewPassword}
                     onChange={(e) => setResetNewPassword(e.target.value)}
-                    className="w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-300 focus:border-red-600 rounded-xl text-sm font-semibold outline-hidden"
+                    className='w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-300 focus:border-red-600 rounded-xl text-sm font-semibold outline-hidden'
                   />
-                  <Lock className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
+                  <Lock className='w-4 h-4 text-gray-400 absolute left-3.5 top-3.5' />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
+                <label className='block text-xs font-bold text-gray-700 uppercase mb-1.5'>
                   নতুন পাসওয়ার্ড নিশ্চিত করুন *
                 </label>
-                <div className="relative">
+                <div className='relative'>
                   <input
-                    type="password"
+                    type='password'
                     required
-                    placeholder="••••••••"
+                    placeholder='••••••••'
                     value={resetConfirmPassword}
                     onChange={(e) => setResetConfirmPassword(e.target.value)}
-                    className="w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-300 focus:border-red-600 rounded-xl text-sm font-semibold outline-hidden"
+                    className='w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-300 focus:border-red-600 rounded-xl text-sm font-semibold outline-hidden'
                   />
-                  <Lock className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
+                  <Lock className='w-4 h-4 text-gray-400 absolute left-3.5 top-3.5' />
                 </div>
               </div>
 
               <button
-                type="submit"
+                type='submit'
                 disabled={isLoading}
-                className="w-full py-3.5 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center cursor-pointer"
+                className='w-full py-3.5 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center cursor-pointer'
               >
-                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'পাসওয়ার্ড রিসেট ও লগইন করুন'}
+                {isLoading ? <Loader2 className='w-5 h-5 animate-spin' /> : 'পাসওয়ার্ড রিসেট ও লগইন করুন'}
               </button>
 
-              <div className="text-center pt-2">
+              <div className='text-center pt-2'>
                 <button
-                  type="button"
+                  type='button'
                   onClick={() => {
                     resetAllStates();
                     setMode('login');
                   }}
-                  className="inline-flex items-center text-xs font-bold text-gray-600 hover:text-red-600 cursor-pointer"
+                  className='inline-flex items-center text-xs font-bold text-gray-600 hover:text-red-600 cursor-pointer'
                 >
-                  <ArrowLeft className="w-3.5 h-3.5 mr-1" />
+                  <ArrowLeft className='w-3.5 h-3.5 mr-1' />
                   বাতিল করুন
                 </button>
               </div>
@@ -475,67 +463,65 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
           {/* MODE 4: FORCE CHANGE */}
           {mode === 'force_change' && (
-            <form onSubmit={handleForcePasswordChange} className="space-y-4">
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 space-y-1">
-                <div className="font-bold flex items-center">
-                  <KeyRound className="w-4 h-4 mr-1 text-amber-600" />
+            <form onSubmit={handleForcePasswordChange} className='space-y-4'>
+              <div className='p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 space-y-1'>
+                <div className='font-bold flex items-center'>
+                  <KeyRound className='w-4 h-4 mr-1 text-amber-600' />
                   নিরাপত্তা নির্দেশিকা:
                 </div>
                 <p>প্রাথমিক ডিফল্ট পাসওয়ার্ড পরিবর্তন করে নতুন পাসওয়ার্ড সেট করুন।</p>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
+                <label className='block text-xs font-bold text-gray-700 uppercase mb-1.5'>
                   নতুন পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর) *
                 </label>
-                <div className="relative">
+                <div className='relative'>
                   <input
-                    type="password"
+                    type='password'
                     required
-                    placeholder="••••••••"
+                    placeholder='••••••••'
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-300 focus:border-red-600 rounded-xl text-sm font-semibold outline-hidden"
+                    className='w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-300 focus:border-red-600 rounded-xl text-sm font-semibold outline-hidden'
                   />
-                  <Lock className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
+                  <Lock className='w-4 h-4 text-gray-400 absolute left-3.5 top-3.5' />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
+                <label className='block text-xs font-bold text-gray-700 uppercase mb-1.5'>
                   নতুন পাসওয়ার্ড নিশ্চিত করুন *
                 </label>
-                <div className="relative">
+                <div className='relative'>
                   <input
-                    type="password"
+                    type='password'
                     required
-                    placeholder="••••••••"
+                    placeholder='••••••••'
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-300 focus:border-red-600 rounded-xl text-sm font-semibold outline-hidden"
+                    className='w-full pl-10 pr-3 py-3 bg-gray-50 border border-gray-300 focus:border-red-600 rounded-xl text-sm font-semibold outline-hidden'
                   />
-                  <Lock className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
+                  <Lock className='w-4 h-4 text-gray-400 absolute left-3.5 top-3.5' />
                 </div>
               </div>
 
               <button
-                type="submit"
+                type='submit'
                 disabled={isLoading}
-                className="w-full py-3.5 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl shadow-md transition-colors flex items-center justify-center cursor-pointer"
+                className='w-full py-3.5 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl shadow-md transition-colors flex items-center justify-center cursor-pointer'
               >
-                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'পাসওয়ার্ড পরিবর্তন ও ড্যাশবোর্ডে প্রবেশ'}
+                {isLoading ? <Loader2 className='w-5 h-5 animate-spin' /> : 'পাসওয়ার্ড পরিবর্তন ও ড্যাশবোর্ডে প্রবেশ'}
               </button>
             </form>
           )}
-
         </div>
       </div>
 
       {/* Footer */}
-      <div className="text-center text-xs text-gray-500 py-4">
+      <div className='text-center text-xs text-gray-500 py-4'>
         © {new Date().getFullYear()} {settings?.websiteNameBn || 'টমছম ব্রিজ টার্ফ'} — সর্বস্বত্ব সংরক্ষিত।
       </div>
-
     </div>
   );
 };

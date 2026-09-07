@@ -1191,7 +1191,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, onL
                       <label className='block font-bold text-gray-800 mb-1'>হিরো বিস্তারিত বিবরণ (Sub-headline)</label>
                       <textarea
                         rows={3}
-                        value={settings.heroSubheadline || ''}
+                        value={settings?.heroSubheadline || ''}
                         onChange={(e) => setSettings({ ...settings, heroSubheadline: e.target.value })}
                         placeholder='আন্তর্জাতিক মানের কৃত্রিম ঘাসের ফুটবল টার্ফ এবং শিশুদের জন্য নিরাপদ ও রোমাঞ্চকর কিডস জোন।...'
                         className='w-full p-3 bg-gray-50 border border-gray-300 rounded-xl font-medium text-gray-900 leading-relaxed'

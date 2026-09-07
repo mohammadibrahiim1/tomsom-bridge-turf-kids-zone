@@ -19,10 +19,14 @@ import {
   LogIn,
 } from 'lucide-react';
 import type { WebsiteSettings } from '../types';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
-import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
+import { logout } from '../features/authentication/services/authSlice/authSlice';
+import { useLogoutMutation } from '../features/authentication/services/authApi/authApi';
+import { baseApi } from '../redux/baseApi/baseApi';
 
 interface NavbarProps {
   settings?: WebsiteSettings;
@@ -58,6 +62,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const settings = { ...defaultNavbarSettings, ...customSettings };
   const currentUser = useSelector((state: RootState) => state.auth?.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -133,21 +138,20 @@ export const Navbar: React.FC<NavbarProps> = ({
     }
   };
 
-  const handleLogoutAction = () => {
-    setIsProfileDropdownOpen(false);
-    setIsMobileMenuOpen(false);
-    if (onLogout) {
-      onLogout();
-    }
-  };
+  const [logoutApi] = useLogoutMutation();
 
-  const handleDashboardAction = () => {
+  const handleLogoutAction = async () => {
     setIsProfileDropdownOpen(false);
     setIsMobileMenuOpen(false);
-    if (onOpenAdmin) {
-      onOpenAdmin();
-    } else {
-      navigate('/admin/dashboard');
+
+    try {
+      await logoutApi({}).unwrap();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      dispatch(logout());
+      dispatch(baseApi.util.resetApiState());
+      navigate({ to: '/login' });
     }
   };
 
@@ -294,13 +298,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                           </div>
                           <div className='p-1.5 space-y-1'>
                             {/* Dashboard First */}
-                            <button
-                              onClick={handleDashboardAction}
+                            <Link
+                              to={'/dashboard/adm_v1'}
                               className='w-full flex items-center px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-md transition-colors cursor-pointer'
                             >
                               <LayoutDashboard className='w-4 h-4 mr-2.5 text-[#2E7D32]' />
                               ড্যাশবোর্ড
-                            </button>
+                            </Link>
 
                             {/* Logout Second */}
                             {
@@ -359,16 +363,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                         </div>
                         <div className='p-1.5 space-y-1'>
                           {/* Dashboard First */}
-                          <button
-                            onClick={handleDashboardAction}
+                          <Link
+                            to={'/dashboard/adm_v1'}
                             className='w-full flex items-center px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-md cursor-pointer'
                           >
                             <LayoutDashboard className='w-4 h-4 mr-2 text-[#2E7D32]' />
                             ড্যাশবোর্ড
-                          </button>
+                          </Link>
 
                           {/* Logout Second */}
-                          {onLogout && (
+                          {
                             <button
                               onClick={handleLogoutAction}
                               className='w-full flex items-center px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-md cursor-pointer'
@@ -376,7 +380,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                               <LogOut className='w-4 h-4 mr-2 text-red-600' />
                               লগআউট
                             </button>
-                          )}
+                          }
                         </div>
                       </motion.div>
                     )}

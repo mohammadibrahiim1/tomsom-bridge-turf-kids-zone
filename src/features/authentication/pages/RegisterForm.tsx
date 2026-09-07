@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { User, Phone, Mail, Lock, AlertCircle, Loader2, LogIn, Eye, EyeOff, UserCheck } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRegisterMutation } from '../services/authApi/authApi';
+import { useNavigate } from '@tanstack/react-router';
 
 const registerSchema = z.object({
   name: z.string().min(1, 'পূর্ণ নাম দেওয়া আবশ্যক।'),
@@ -54,7 +54,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin, onS
     if (onSwitchToLogin) {
       onSwitchToLogin();
     } else {
-      navigate('/login');
+      navigate({ to: '/login' });
     }
   };
 
@@ -66,7 +66,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin, onS
         if (onSuccess) {
           onSuccess();
         } else {
-          navigate('/login');
+          navigate({ to: '/login' });
         }
       }
     } catch (err: any) {
