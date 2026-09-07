@@ -23,7 +23,7 @@ export const DashboardLayout: React.FC = () => {
   };
 
   return (
-    <div className='min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans antialiased selection:bg-red-500 selection:text-white'>
+    <div className='min-h-screen flex flex-col font-sans antialiased selection:bg-red-500 selection:text-white'>
       {/* Top Fixed Header */}
       <DashboardHeader
         isCollapsed={isCollapsed}
@@ -44,7 +44,7 @@ export const DashboardLayout: React.FC = () => {
           isCollapsed ? 'lg:pl-[80px]' : 'lg:pl-[280px]'
         }`}
       >
-        <div className='p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full'>
+        <div className='mx-auto w-full px-5 sm:px-6 lg:px-8 border border-slate-200 min-h-[calc(100vh-4rem)]'>
           <Outlet />
         </div>
       </main>

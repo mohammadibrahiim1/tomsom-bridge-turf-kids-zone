@@ -2,6 +2,7 @@ import { createRoute, redirect, Outlet } from '@tanstack/react-router';
 import { Suspense, lazy } from 'react';
 import { rootRoute } from '../router';
 import { store } from '../../redux/store/store'; // Redux Store Import
+import SlotManagement from '../../features/slot-management/pages/SlotManagement';
 
 const DashboardLayout = lazy(() =>
   import('../../layouts/DashboardLayout').then((m) => ({ default: m.DashboardLayout })),
@@ -47,4 +48,15 @@ export const adminIndexRoute = createRoute({
   ),
 });
 
-export const dashboardRoutes = [adminIndexRoute];
+// Create Slot Route (/dashboard/adm_v1/create-slot)
+export const slotManagementRoute = createRoute({
+  getParentRoute: () => dashboardRoute,
+  path: '/slot-management',
+  component: () => (
+    <Suspense fallback={<PageLoader />}>
+      <SlotManagement />
+    </Suspense>
+  ),
+});
+
+export const dashboardRoutes = [adminIndexRoute, slotManagementRoute];

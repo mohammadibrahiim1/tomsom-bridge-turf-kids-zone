@@ -27,7 +27,7 @@ export interface DashboardSidebarMenuItems {
 export const DashboardSidebarMenuItems: DashboardSidebarMenuItems[] = [
   { id: 'overview', label: 'ড্যাশবোর্ড', to: '/dashboard/adm_v1', icon: LayoutDashboard },
   { id: 'bookings', label: 'বুকিং ব্যবস্থাপনা', to: '/dashboard/adm_v1/bookings', icon: CalendarCheck },
-  { id: 'slots', label: 'টাইম স্লট ও প্রাইসিং', to: '/dashboard/adm_v1/slots', icon: Clock },
+  { id: 'slots', label: 'টাইম স্লট ও প্রাইসিং', to: '/dashboard/adm_v1/slot-management', icon: Clock },
   { id: 'settings', label: 'টার্ফ ও সাইট সেটিংস', to: '/dashboard/adm_v1/settings', icon: Settings },
   { id: 'kids', label: 'কিডস জোন সেটিংস', to: '/dashboard/adm_v1/kids', icon: Baby },
   { id: 'coupons', label: 'কুপন ও স্পেশাল অফার', to: '/dashboard/adm_v1/coupons', icon: Tag },
