@@ -44,7 +44,7 @@ export const DashboardLayout: React.FC = () => {
           isCollapsed ? 'lg:pl-[80px]' : 'lg:pl-[280px]'
         }`}
       >
-        <div className='mx-auto w-full px-5 sm:px-6 lg:px-8 border border-slate-200 min-h-[calc(100vh-4rem)]'>
+        <div className='mx-auto bg-white w-full min-h-[calc(100vh-4rem)]'>
           <Outlet />
         </div>
       </main>

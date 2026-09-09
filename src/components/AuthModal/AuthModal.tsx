@@ -30,36 +30,36 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen: propIsOpen, mode: 
     }
   };
 
-  // 🔴 পরম সমাধান: ১.২ সেকেন্ড সাকসেস মেসেজ রাখার পর মডাল ক্লোজ করা
   const handleSuccess = () => {
     setTimeout(() => {
       handleClose();
-    }, 1200);
+    }, 1500);
   };
 
   return (
     <div
-      className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity animate-fadeIn'
+      className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-md transition-opacity animate-fadeIn'
       onClick={handleClose}
     >
       <div
-        className='relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 transform transition-all'
+        className='relative w-full max-w-md bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/50 transform transition-all p-6'
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={handleClose}
-          className='absolute top-4 right-4 z-10 p-2 text-gray-400 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors cursor-pointer'
+          className='absolute top-4 right-4 z-10 p-2 text-slate-500 hover:text-slate-800 bg-slate-100/80 hover:bg-slate-200/90 rounded-full transition-colors cursor-pointer border border-slate-200/50'
           aria-label='Close modal'
         >
           <X className='w-5 h-5' />
         </button>
 
-        <div className='p-6'>
+        <div className='mt-2'>
           {currentMode === 'login' && (
             <LoginForm
               onSwitchToRegister={() => dispatch(switchAuthMode('register'))}
               onSwitchToResetPassword={() => dispatch(switchAuthMode('reset-password'))}
               onSuccess={handleSuccess}
+              onClose={handleClose}
             />
           )}
 

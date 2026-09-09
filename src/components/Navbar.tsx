@@ -60,7 +60,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onLogout,
 }) => {
   const settings = { ...defaultNavbarSettings, ...customSettings };
-  const currentUser = useSelector((state: RootState) => state.auth?.user);
+  const currentUser = useSelector((state: RootState) => state?.auth?.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -147,7 +147,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     try {
       await logoutApi({}).unwrap();
     } catch (error) {
-      console.error('Logout error:', error);
     } finally {
       dispatch(logout());
       dispatch(baseApi.util.resetApiState());
@@ -246,13 +245,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               </nav>
 
               <div className='flex items-center space-x-2.5 border-l border-slate-200 pl-6'>
-                <button
+                <Link
+                  to='/find-your-booking'
                   onClick={onOpenSearch}
                   className='inline-flex items-center px-3 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md transition-colors cursor-pointer border border-slate-200'
                 >
                   <Search className='w-4 h-4 mr-1.5 text-slate-600' />
-                  {settings.headerSearchBtnText || 'অনুসন্ধান'}
-                </button>
+                  Find Booking
+                </Link>
 
                 <Link
                   to='/booking'
@@ -271,10 +271,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                       className='flex items-center space-x-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-md transition-all cursor-pointer'
                     >
                       <div className='w-7 h-7 rounded-lg bg-[#2E7D32] text-white flex items-center justify-center font-bold text-xs shadow-xs'>
-                        {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
+                        {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
                       </div>
                       <span className='block text-xs font-bold text-slate-900 max-w-[100px] truncate'>
-                        {currentUser.name}
+                        {currentUser?.name}
                       </span>
                       <ChevronDown
                         className={`w-3.5 h-3.5 text-slate-500 transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`}

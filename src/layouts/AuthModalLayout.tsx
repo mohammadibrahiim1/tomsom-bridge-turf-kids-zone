@@ -16,7 +16,7 @@ export const AuthModalLayout: React.FC = () => {
 
   return (
     <div
-      className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity animate-fadeIn'
+      className='fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs transition-opacity animate-fadeIn'
       onClick={handleClose}
     >
       <div

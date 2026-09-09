@@ -1,45 +1,7 @@
-// ==========================================
-// 1. RTK QUERY API SLICE (slotApi.ts)
-// ==========================================
-
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { ISlotPayload } from '../../slotTypes/slot.types';
 
-export interface ISlotPayload {
-  slotId: string;
-  groundType: 'PITCH_1_SMALL' | 'PITCH_2_LARGE';
-  groundTypeBn?: string;
-  sportType: 'FOOTBALL' | 'CRICKET' | 'BADMINTON' | 'KIDS_ZONE';
-  sportTypeBn?: string;
-  packageNumber?: number;
-  packageName?: string;
-  startTime: string;
-  endTime: string;
-  displayTime: string;
-  bookingDate?: string;
-  playDurationMinutes?: number;
-  bufferDurationMinutes?: number;
-  hasExtraTime?: boolean;
-  extraTimeMinutes?: number;
-  extraTimeCharge?: number;
-  slotType: 'MORNING' | 'AFTERNOON' | 'EVENING' | 'NIGHT';
-  slotTypeBn?: string;
-  regularPrice: number;
-  extraGroundCharge?: number;
-  totalPrice?: number;
-  peakPrice?: number;
-  weekendPrice?: number;
-  isNightMatch?: boolean;
-  hasRainEffect?: boolean;
-  hasSoundSystem?: boolean;
-  includedAmenities?: string[];
-  customAttributes?: {
-    extraNote?: string;
-    maxPlayer?: number;
-    [key: string]: any;
-  };
-  status?: 'AVAILABLE' | 'BOOKED' | 'LOCKED' | 'MAINTENANCE';
-  isActive?: boolean;
-}
+
 
 export const slotApi = createApi({
   reducerPath: 'slotApi',

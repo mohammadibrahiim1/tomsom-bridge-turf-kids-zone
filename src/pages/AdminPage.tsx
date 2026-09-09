@@ -25,8 +25,6 @@ interface AdminPageProps {
   settings?: WebsiteSettings | null;
 }
 
-type AuthMode = 'login' | 'forgot_request' | 'forgot_reset' | 'force_change';
-
 export const AdminPage: React.FC<AdminPageProps> = ({
   currentUser,
   onLoginSuccess,

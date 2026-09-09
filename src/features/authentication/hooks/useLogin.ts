@@ -9,8 +9,8 @@ import { User } from '../../../types';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 
 const loginSchema = z.object({
-  username: z.string().min(1, 'ইমেইল অথবা ইউজারনেম দেওয়া আবশ্যক।'),
-  password: z.string().min(1, 'পাসওয়ার্ড দেওয়া আবশ্যক।'),
+  username: z.string().min(1, 'ইমেইল অথবা ইউজারনেম দেওয়া আবশ্যক।'),
+  password: z.string().min(1, 'পাসওয়ার্ড দেওয়া আবশ্যক।'),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
@@ -36,7 +36,6 @@ export const useLoginModal = ({ onClose, onOpenRegister, onForgotPassword, onSuc
     register,
     handleSubmit,
     getValues,
-    reset,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -74,31 +73,27 @@ export const useLoginModal = ({ onClose, onOpenRegister, onForgotPassword, onSuc
 
       const res = await login(credentials).unwrap();
 
-      if (res.success && res.data?.user) {
-        // ১. Redux-এ ইউজার সেট
+      if (res.success === true) {
+        setSuccessMessage(res?.message || 'লগইন সফল হয়েছে! রিডাইরেক্ট করা হচ্ছে...');
+
         dispatch(setUser({ user: res.data.user as User }));
 
-        // ২. সাকসেস মেসেজ শো
-        setSuccessMessage('লগইন সফল হয়েছে! রিডাইরেক্ট করা হচ্ছে...');
-
-        // ৩. রাউটার ইনভ্যালিডেট করে রিফ্রেশ ছাড়া অটো রিডাইরেক্ট
         setTimeout(async () => {
-          if (onSuccess) onSuccess();
+          if (onSuccess) {
+            onSuccess();
+          }
 
-          // TanStack Router-কে নতুন Redux State আপডেট রি-ইভালুয়েট করানো
           await router.invalidate();
 
           if (onClose) {
             onClose();
           } else {
-            // রিফ্রেশ ছাড়াই হোমপেজ/ড্যাশবোর্ডে নেভিগেট
             navigate({ to: '/' });
           }
-        }, 1200);
+        }, 1500);
       }
     } catch (err: any) {
-      // 👈 এরর আসলে সফল মেসেজ দেখাবে না, শুধু এরর মেসেজ নিয়ে লগইন পেজেই থাকবে
-      const backendErrorMsg = err?.data?.message || err?.message || 'ভুল ইমেইল/ইউজারনেম বা পাসওয়ার্ড।';
+      const backendErrorMsg = err?.data?.message || err?.message || 'ভুল ইমেইল/ইউজারনেম বা পাসওয়ার্ড।';
       setErrorMessage(backendErrorMsg);
     }
   };

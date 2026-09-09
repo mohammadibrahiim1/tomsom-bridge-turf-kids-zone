@@ -10,6 +10,7 @@ import { BookingPage } from '../../features/landing/pages/BookingPage';
 import { AboutPage } from '../../features/landing/pages/AboutPage';
 import { GalleryPage } from '../../features/landing/pages/GalleryPage';
 import { ContactPage } from '../../pages/ContactPage';
+import { FindYourBooking } from '../../features/landing/components/FindYourBooking';
 
 const PageLoader = () => (
   <div className='flex min-h-[60vh] items-center justify-center'>
@@ -70,6 +71,12 @@ export const contactRoute = createRoute({
   component: ContactPage,
 });
 
+export const FindYourBookingRoute = createRoute({
+  getParentRoute: () => publicLayoutRoute,
+  path: '/find-your-booking',
+  component: FindYourBooking,
+});
+
 export const publicRoutes = [
   homeRoute,
   kidsZoneRoute,
@@ -78,4 +85,5 @@ export const publicRoutes = [
   aboutRoute,
   galleryRoute,
   contactRoute,
+  FindYourBookingRoute,
 ];

@@ -589,7 +589,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, onL
   return (
     <div className='min-h-screen bg-gray-100 flex flex-col'>
       {/* Top Admin Header */}
-      <header className='bg-slate-900 text-white px-4 sm:px-8 py-3.5 flex items-center justify-between border-b border-slate-800 shadow-md'>
+      <header className=' text-white px-4 sm:px-8 py-3.5 flex items-center justify-between border-b border-slate-800 shadow-md'>
         <div className='flex items-center space-x-3'>
           <div className='w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center font-black text-lg text-white shadow-md'>
             TB
