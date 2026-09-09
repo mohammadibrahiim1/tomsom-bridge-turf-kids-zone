@@ -1,17 +1,37 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from '@tanstack/react-router';
+import { Link, useLocation, useNavigate } from '@tanstack/react-router';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, MoreHorizontal, X } from 'lucide-react';
 import { DashboardSidebarMenuItems } from '../../../config/dashboardSidebarMenuItems';
+import { useLogoutMutation } from '../../authentication/services/authApi/authApi';
+import { logout } from '../../authentication/services/authSlice/authSlice';
+import { baseApi } from '../../../redux/baseApi/baseApi';
+import { useDispatch } from 'react-redux';
 
 interface DashboardSidebarProps {
   isCollapsed: boolean;
-  handleLogout: () => void;
 }
 
-export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isCollapsed, handleLogout }) => {
+export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isCollapsed }) => {
   const location = useLocation();
   const [isMoreOpen, setIsMoreOpen] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [logoutApi] = useLogoutMutation();
+
+  const onLogout = async () => {
+    setIsMoreOpen(false);
+
+    try {
+      await logoutApi({}).unwrap();
+    } catch (error) {
+    } finally {
+      dispatch(logout());
+      dispatch(baseApi.util.resetApiState());
+      navigate({ to: '/login' });
+    }
+  };
 
   // Mobile/Pad Navbar Visible Item Split (First 4 items, rest in sheet)
   const visibleNavItems = DashboardSidebarMenuItems.slice(0, 4);
@@ -102,7 +122,7 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isCollapsed,
         {/* Logout Area */}
         <div className='p-3 border-t border-emerald-800/80 shrink-0'>
           <button
-            onClick={handleLogout}
+            onClick={onLogout}
             className={`w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-red-950/40 hover:bg-red-600 text-red-300 hover:text-white border border-red-800/40 hover:border-transparent text-xs font-bold rounded-xl transition-all duration-200 cursor-pointer ${
               isCollapsed ? 'px-0' : ''
             }`}
@@ -208,10 +228,7 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isCollapsed,
               {/* Logout Button inside Bottom Sheet */}
               <div className='p-4 border-t border-emerald-800/80 bg-emerald-950 shrink-0'>
                 <button
-                  onClick={() => {
-                    setIsMoreOpen(false);
-                    handleLogout();
-                  }}
+                  onClick={onLogout}
                   className='w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-950/50 hover:bg-red-600 text-red-300 hover:text-white border border-red-800/40 text-xs font-bold rounded-xl transition-all cursor-pointer'
                 >
                   <LogOut className='w-4 h-4 shrink-0' />

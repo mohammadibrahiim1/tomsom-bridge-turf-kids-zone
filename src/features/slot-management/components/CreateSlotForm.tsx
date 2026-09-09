@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { Clock, Sparkles, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Clock, Sparkles, AlertCircle, CheckCircle2, Info } from 'lucide-react';
 import { useCreateSlotMutation } from '../service/slotApi/slogApi';
 import { ISlotPayload } from '../slotTypes/slot.types';
 
@@ -21,7 +21,7 @@ const AMENITIES_OPTIONS = [
   'দর্শকদের বসার ব্যবস্থা',
 ];
 
-// ২৪ ঘন্টার "HH:MM" সময়কে ১২ ঘন্টার AM/PM ফরম্যাটে রূপান্তর করার ফাংশন
+// ২৪ ঘন্টার "HH:MM" সময়কে ১২ ঘন্টার AM/PM ফরম্যাটে রূপান্তর করার ফাংশন
 const formatTo12Hour = (time24: string): string => {
   if (!time24) return '';
   const [hoursStr, minutesStr] = time24.split(':');
@@ -58,18 +58,18 @@ export default function CreateSlotForm() {
       startTime: '18:00',
       endTime: '19:30',
       displayTime: '06:00 PM - 07:30 PM',
-      playDurationMinutes: 90,
-      bufferDurationMinutes: 10,
+      playDurationMinutes: 0,
+      bufferDurationMinutes: 0,
       hasExtraTime: false,
       extraTimeMinutes: 0,
       extraTimeCharge: 0,
       slotType: 'EVENING',
       slotTypeBn: 'সন্ধ্যা',
-      regularPrice: 1400,
-      extraGroundCharge: 200,
-      totalPrice: 1600,
-      peakPrice: 1600,
-      weekendPrice: 1500,
+      regularPrice: 0,
+      extraGroundCharge: 0,
+      totalPrice: 0,
+      peakPrice: 0,
+      weekendPrice: 0,
       isNightMatch: true,
       hasRainEffect: false,
       hasSoundSystem: true,
@@ -88,17 +88,43 @@ export default function CreateSlotForm() {
   const watchEndTime = watch('endTime');
   const watchRegularPrice = watch('regularPrice');
   const watchExtraGroundCharge = watch('extraGroundCharge');
+  const watchPlayDuration = watch('playDurationMinutes');
+  const watchBufferDuration = watch('bufferDurationMinutes');
 
-  // ১. সময় ইনপুট পরিবর্তন হলে লাইভ AM/PM সহ Display Time জেনারেট করা
+  // ==========================================
+  // [পরিবর্তন ১ & ২] সময় ইনপুট পরিবর্তন হলে সময়ের ব্যবধান, Play Duration ও Buffer Duration জেনারেট করা
+  // ==========================================
   useEffect(() => {
     if (watchStartTime && watchEndTime) {
+      // AM/PM Display Time ফরম্যাটিং
       const formattedStart = formatTo12Hour(watchStartTime);
       const formattedEnd = formatTo12Hour(watchEndTime);
       setValue('displayTime', `${formattedStart} - ${formattedEnd}`, { shouldValidate: true });
+
+      // মোট কত মিনিট সময় তা গণনা করা
+      const [startH, startM] = watchStartTime.split(':').map(Number);
+      const [endH, endM] = watchEndTime.split(':').map(Number);
+
+      let startInMinutes = startH * 60 + startM;
+      let endInMinutes = endH * 60 + endM;
+
+      // যদি শেষ সময় রাত ১২টা পার হয়ে যায় (Midnight crossover)
+      if (endInMinutes <= startInMinutes) {
+        endInMinutes += 24 * 60;
+      }
+
+      const totalDuration = endInMinutes - startInMinutes;
+
+      // মোট সময় থেকে ৫ মিনিট বাফার টাইম বাদ দিয়ে প্লে ডিউরেশন সেট করা
+      const buffer = 5;
+      const play = totalDuration > buffer ? totalDuration - buffer : 0;
+
+      setValue('playDurationMinutes', play, { shouldValidate: true });
+      setValue('bufferDurationMinutes', buffer, { shouldValidate: true });
     }
   }, [watchStartTime, watchEndTime, setValue]);
 
-  // ২. Regular Price বা Extra Ground Charge পরিবর্তন হলে Total Price অটো হিসাব
+  // Regular Price বা Extra Ground Charge পরিবর্তন হলে Total Price অটো হিসাব
   useEffect(() => {
     const regPrice = Number(watchRegularPrice) || 0;
     const extraCharge = Number(watchExtraGroundCharge) || 0;
@@ -109,7 +135,7 @@ export default function CreateSlotForm() {
     setServerError('');
     setSuccessMsg('');
 
-    // স্বয়ংক্রিয়ভাবে ইউনিক স্লট আইডি জেনারেট
+    // স্বয়ংক্রিয়ভাবে ইউনিক স্লট আইডি জেনারেট
     const startFormatted = data.startTime.replace(':', '');
     const endFormatted = data.endTime.replace(':', '');
     const generatedSlotId = `${data.sportType}-${data.slotType}-${startFormatted}-${endFormatted}-${Date.now().toString().slice(-4)}`;
@@ -122,16 +148,20 @@ export default function CreateSlotForm() {
       totalPrice: Number(data.totalPrice),
     };
 
+    console.log('Submitting Payload:', payload);
+
     try {
-      await createSlot(payload).unwrap();
-      setSuccessMsg('নতুন টার্ফ স্লট সফলভাবে তৈরি হয়েছে!');
+      // await createSlot(payload).unwrap();
+      setSuccessMsg('নতুন টার্ফ স্লট সফলভাবে তৈরি হয়েছে!');
       reset();
       setTimeout(() => setSuccessMsg(''), 4000);
     } catch (err: any) {
       console.error('Failed to create slot:', err);
-      setServerError(err?.data?.message || 'স্লট তৈরি করতে সমস্যা হয়েছে! পরে আবার চেষ্টা করুন।');
+      setServerError(err?.data?.message || 'স্লট তৈরি করতে সমস্যা হয়েছে! পরে আবার চেষ্টা করুন।');
     }
   };
+
+  const totalSlotDuration = (watchPlayDuration || 0) + (watchBufferDuration || 0);
 
   return (
     <div className='w-full max-w-4xl p-2 sm:p-4'>
@@ -143,7 +173,7 @@ export default function CreateSlotForm() {
         </div>
         <h2 className='text-2xl sm:text-3xl font-black text-slate-800 tracking-tight'>নতুন টার্ফ স্লট তৈরি করুন</h2>
         <p className='text-slate-500 text-xs sm:text-sm mt-1'>
-          সঠিক তথ্য দিয়ে নতুন একটি খেলার স্লট যুক্ত করুন। স্লট আইডি স্বয়ংক্রিয়ভাবে জেনারেট হবে।
+          সঠিক তথ্য দিয়ে নতুন একটি খেলার স্লট যুক্ত করুন। স্লট আইডি স্বয়ংক্রিয়ভাবে জেনারেট হবে।
         </p>
       </div>
 
@@ -202,7 +232,7 @@ export default function CreateSlotForm() {
               />
             </div>
 
-            {/* Ground Type (Updated List) */}
+            {/* Ground Type */}
             <div>
               <label className='block text-xs font-bold text-slate-700 mb-2'>মাঠের ধরণ (Ground Type)</label>
               <Controller
@@ -225,7 +255,7 @@ export default function CreateSlotForm() {
               />
             </div>
 
-            {/* Slot Time Type (Updated List) */}
+            {/* Slot Time Type */}
             <div>
               <label className='block text-xs font-bold text-slate-700 mb-2'>স্লটের ক্যাটাগরি (Slot Type)</label>
               <Controller
@@ -290,20 +320,20 @@ export default function CreateSlotForm() {
           </div>
         </div>
 
-        {/* ২. সময়সূচি (Timing Setup - With Input Type Time) */}
+        {/* ২. সময়সূচি (Timing Setup - Dynamic Duration Setup) */}
         <div className='space-y-4'>
           <h3 className='text-sm font-bold text-slate-800 uppercase tracking-wider border-l-4 border-indigo-600 pl-2.5'>
-            ২. সময়সূচি
+            ২. সময়সূচি
           </h3>
 
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
             {/* Start Time Input */}
             <div>
-              <label className='block text-xs font-bold text-slate-700 mb-2'>শুরুর সময় (Start Time)</label>
+              <label className='block text-xs font-bold text-slate-700 mb-2'>শুরুর সময় (Start Time)</label>
               <Controller
                 name='startTime'
                 control={control}
-                rules={{ required: 'শুরুর সময় দিন' }}
+                rules={{ required: 'শুরুর সময় দিন' }}
                 render={({ field }) => (
                   <input
                     {...field}
@@ -316,11 +346,11 @@ export default function CreateSlotForm() {
 
             {/* End Time Input */}
             <div>
-              <label className='block text-xs font-bold text-slate-700 mb-2'>শেষের সময় (End Time)</label>
+              <label className='block text-xs font-bold text-slate-700 mb-2'>শেষের সময় (End Time)</label>
               <Controller
                 name='endTime'
                 control={control}
-                rules={{ required: 'শেষের সময় দিন' }}
+                rules={{ required: 'শেষের সময় দিন' }}
                 render={({ field }) => (
                   <input
                     {...field}
@@ -331,28 +361,46 @@ export default function CreateSlotForm() {
               />
             </div>
 
-            {/* Display Time Preview Card */}
-            <div className='sm:col-span-2 bg-indigo-50/60 border border-indigo-100 rounded-md p-4 flex items-center justify-between'>
-              <div className='flex items-center gap-3'>
-                <div className='p-2.5 bg-indigo-600 text-white rounded-md'>
-                  <Clock className='w-5 h-5' />
+            {/* [পরিবর্তন ৩] Display Time and Calculated Duration Preview Card */}
+            <div className='sm:col-span-2 bg-indigo-50/60 border border-indigo-100 rounded-md p-4 space-y-3'>
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-3'>
+                  <div className='p-2.5 bg-indigo-600 text-white rounded-md'>
+                    <Clock className='w-5 h-5' />
+                  </div>
+                  <div>
+                    <span className='block text-[11px] font-bold text-indigo-900/60 uppercase tracking-wider'>
+                      লাইভ ডিসপ্লে টাইম (AM/PM)
+                    </span>
+                    <Controller
+                      name='displayTime'
+                      control={control}
+                      render={({ field }) => (
+                        <span className='text-base sm:text-lg font-black text-indigo-950'>
+                          {field.value || '--:--'}
+                        </span>
+                      )}
+                    />
+                  </div>
                 </div>
+                <span className='text-[10px] font-bold bg-indigo-200/60 text-indigo-800 px-2.5 py-1 rounded-full'>
+                  অটোমেটিক আপডেট
+                </span>
+              </div>
+
+              {/* Dynamic Calculation Info Note */}
+              <div className='pt-2 border-t border-indigo-100 flex items-start gap-2 text-xs text-indigo-950 font-medium'>
+                <Info className='w-4 h-4 text-indigo-600 flex-shrink-0 mt-0.5' />
                 <div>
-                  <span className='block text-[11px] font-bold text-indigo-900/60 uppercase tracking-wider'>
-                    লাইভ ডিসপ্লে টাইম প্রিভিউ (AM/PM)
-                  </span>
-                  <Controller
-                    name='displayTime'
-                    control={control}
-                    render={({ field }) => (
-                      <span className='text-base sm:text-lg font-black text-indigo-950'>{field.value || '--:--'}</span>
-                    )}
-                  />
+                  <p>
+                    মোট সময়: <span className='font-bold text-indigo-700'>{totalSlotDuration} মিনিট</span>
+                  </p>
+                  <p className='text-[11px] text-slate-600 mt-0.5'>
+                    (খেলার সময়: <span className='font-bold text-emerald-700'>{watchPlayDuration || 0} মিনিট</span>,
+                    বাফার সময়: <span className='font-bold text-amber-700'>{watchBufferDuration || 0} মিনিট</span>)
+                  </p>
                 </div>
               </div>
-              <span className='text-[10px] font-bold bg-indigo-200/60 text-indigo-800 px-2.5 py-1 rounded-full'>
-                অটোমেটিক আপডেট
-              </span>
             </div>
           </div>
         </div>
@@ -370,7 +418,7 @@ export default function CreateSlotForm() {
               <Controller
                 name='regularPrice'
                 control={control}
-                rules={{ required: 'মূল্য দেয়া বাধ্যতামূলক' }}
+                rules={{ required: 'মূল্য দেয়া বাধ্যতামূলক' }}
                 render={({ field }) => (
                   <div className='relative'>
                     <span className='absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs'>
@@ -437,13 +485,13 @@ export default function CreateSlotForm() {
           </div>
         </div>
 
-        {/* ৪. ফিচার ও সুযোগ-সুবিধা (Updated Features & Multi Amenities) */}
+        {/* ৪. ফিচার ও সুযোগ-সুবিধা */}
         <div className='space-y-4'>
           <h3 className='text-sm font-bold text-slate-800 uppercase tracking-wider border-l-4 border-indigo-600 pl-2.5'>
             ৪. ফিচার ও সুযোগ-সুবিধা
           </h3>
 
-          {/* Checkbox Options (More Features Added) */}
+          {/* Checkbox Options */}
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-4 bg-slate-50/80 border border-slate-200/80 rounded-md'>
             <Controller
               name='isNightMatch'

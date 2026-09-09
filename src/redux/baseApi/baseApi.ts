@@ -6,6 +6,13 @@ import { RootState } from '../store/store';
 const baseQuery = fetchBaseQuery({
   baseUrl: 'http://localhost:9000/api/v1',
   credentials: 'include',
+  prepareHeaders: (headers, { getState }) => {
+    const token = (getState() as RootState).auth.accessToken;
+    if (token) {
+      headers.set('authorization', `Bearer ${token}`);
+    }
+    return headers;
+  },
 });
 
 const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
@@ -13,10 +20,25 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
   api,
   extraOptions,
 ) => {
-  const state = api.getState() as RootState;
-  const token = state.auth.accessToken;
+  let state = api.getState() as RootState;
+  let token = state.auth.accessToken;
+  const url = typeof args === 'string' ? args : args.url;
 
-  if (token) {
+  // ১. রিফ্রেশ দিলে Redux-এ টোকেন থাকবে না। তাই সরাসরি 401 এরর খাওয়া এড়াতে আগে Refresh Token চেক করে টোকেন তুলুন
+  if (!token && !url.includes('/auth/refresh-token') && !url.includes('/auth/login')) {
+    const refreshResult = await baseQuery({ url: '/auth/refresh-token', method: 'POST' }, api, extraOptions);
+
+    if (refreshResult.data) {
+      const newAccessToken = (refreshResult.data as any).data?.accessToken;
+      if (newAccessToken) {
+        api.dispatch(setAccessToken(newAccessToken));
+        token = newAccessToken; // নতুন টোকেন আপডেট হলো
+      }
+    }
+  }
+
+  // ২. যদি টোকেন আগে থেকেই থাকে কিন্তু এক্সপায়ার হওয়ার পথে থাকে (কমপক্ষে ৩০ সেকেন্ড)
+  if (token && !url.includes('/auth/refresh-token')) {
     try {
       const decoded: { exp: number } = jwtDecode(token);
       const currentTime = Date.now() / 1000;
@@ -32,13 +54,14 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
         }
       }
     } catch (err) {
-      // Ignore decode error
+      // Decode Error হ্যান্ডেলিং
     }
   }
 
+  // ৩. মূল API কল করা
   let result = await baseQuery(args, api, extraOptions);
 
-  const url = typeof args === 'string' ? args : args.url;
+  // ৪. যদি তবুও ৪০১ আসে তাহলে শেষ চেষ্টা হিসেবে পুনরায় RefreshToken ট্রাই করা
   if (result.error && result.error.status === 401 && !url.includes('/auth/refresh-token')) {
     const refreshResult = await baseQuery({ url: '/auth/refresh-token', method: 'POST' }, api, extraOptions);
 
@@ -46,8 +69,8 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
       const newAccessToken = (refreshResult.data as any).data?.accessToken;
       if (newAccessToken) {
         api.dispatch(setAccessToken(newAccessToken));
+        result = await baseQuery(args, api, extraOptions);
       }
-      result = await baseQuery(args, api, extraOptions);
     } else {
       api.dispatch(logout());
     }

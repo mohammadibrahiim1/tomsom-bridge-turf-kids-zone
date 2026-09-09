@@ -1,7 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Globe, User as UserIcon, Settings, LogOut, ChevronDown } from 'lucide-react';
+import { useLogoutMutation } from '../../authentication/services/authApi/authApi';
+import { logout } from '../../authentication/services/authSlice/authSlice';
+import { useDispatch } from 'react-redux';
+import { baseApi } from '../../../redux/baseApi/baseApi';
 
 interface DashboardHeaderProps {
   isCollapsed: boolean;
@@ -10,17 +14,14 @@ interface DashboardHeaderProps {
     name: string;
     role: string;
   };
-  handleLogout: () => void;
+  handleLogoutAction?: () => void;
 }
 
-export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
-  isCollapsed,
-  setIsCollapsed,
-  currentUser,
-  handleLogout,
-}) => {
+export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ isCollapsed, setIsCollapsed, currentUser }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -35,6 +36,21 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const [logoutApi] = useLogoutMutation();
+
+  const onLogout = async () => {
+    setIsDropdownOpen(false);
+
+    try {
+      await logoutApi({}).unwrap();
+    } catch (error) {
+    } finally {
+      dispatch(logout());
+      dispatch(baseApi.util.resetApiState());
+      navigate({ to: '/login' });
+    }
+  };
 
   return (
     <header
@@ -84,9 +100,9 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               <UserIcon className='w-4 h-4 text-emerald-300' />
             </div>
             <div className='text-left hidden sm:block'>
-              <span className='text-xs font-bold text-emerald-50 block leading-tight'>{currentUser.name}</span>
+              <span className='text-xs font-bold text-emerald-50 block leading-tight'>{currentUser?.name}</span>
               <span className='text-[10px] font-medium text-emerald-300/80 block uppercase tracking-wider'>
-                {currentUser.role}
+                {currentUser?.role}
               </span>
             </div>
             <ChevronDown
@@ -114,24 +130,15 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                   </p>
                 </div>
 
-                {/* Navigation Links */}
+                {/* Dropdown Options */}
                 <div className='space-y-0.5'>
                   <Link
-                    to='/dashboard/profile'
+                    to='/'
                     onClick={() => setIsDropdownOpen(false)}
-                    className='flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-semibold text-emerald-200 hover:text-white hover:bg-emerald-900/80 transition-colors'
+                    className='flex sm:hidden items-center gap-2.5 px-3 py-2 rounded-md text-xs font-semibold text-emerald-200 hover:text-white hover:bg-emerald-900/80 transition-colors'
                   >
-                    <UserIcon className='w-4 h-4 text-emerald-400' />
-                    <span>প্রোফাইল</span>
-                  </Link>
-
-                  <Link
-                    to='/dashboard/settings'
-                    onClick={() => setIsDropdownOpen(false)}
-                    className='flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-semibold text-emerald-200 hover:text-white hover:bg-emerald-900/80 transition-colors'
-                  >
-                    <Settings className='w-4 h-4 text-emerald-400' />
-                    <span>সেটিংস</span>
+                    <Globe className='w-4 h-4 text-emerald-400' />
+                    <span>ওয়েবসাইট দেখুন</span>
                   </Link>
                 </div>
 
@@ -139,10 +146,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 
                 {/* Logout Button */}
                 <button
-                  onClick={() => {
-                    setIsDropdownOpen(false);
-                    handleLogout();
-                  }}
+                  onClick={onLogout}
                   className='w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-semibold text-red-300 hover:text-white hover:bg-red-600 transition-all cursor-pointer'
                 >
                   <LogOut className='w-4 h-4' />

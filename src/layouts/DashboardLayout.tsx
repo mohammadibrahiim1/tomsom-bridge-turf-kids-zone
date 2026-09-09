@@ -17,23 +17,13 @@ export const DashboardLayout: React.FC = () => {
     role: user?.role || 'Super Admin',
   };
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate({ to: '/' });
-  };
-
   return (
     <div className='min-h-screen flex flex-col font-sans antialiased selection:bg-red-500 selection:text-white'>
       {/* Top Fixed Header */}
-      <DashboardHeader
-        isCollapsed={isCollapsed}
-        setIsCollapsed={setIsCollapsed}
-        currentUser={currentUser}
-        handleLogout={handleLogout}
-      />
+      <DashboardHeader isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} currentUser={currentUser} />
 
       {/* Dynamic Sidebar & Mobile Bottom Sheet */}
-      <DashboardSidebar isCollapsed={isCollapsed} handleLogout={handleLogout} />
+      <DashboardSidebar isCollapsed={isCollapsed} />
 
       {/* Main Outlet Render Canvas */}
       <main
