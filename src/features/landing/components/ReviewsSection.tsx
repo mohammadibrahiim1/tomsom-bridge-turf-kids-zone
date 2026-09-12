@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Star, MessageSquarePlus, CheckCircle2, User, Send, Loader2 } from 'lucide-react';
-import { api } from '../../../services/api';
+// import { api } from '../../../services/api';
 import { ReviewsSectionProps } from '../landingTypes/reviews.types';
 
 export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews = [] }) => {
@@ -21,27 +21,27 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews = [] }) 
     setErrorMessage(null);
 
     try {
-      const res = await api.submitReview({
-        customerName: name.trim(),
-        rating,
-        comment: comment.trim(),
-        userPhone: phone.trim(),
-      });
+      // const res = await api.submitReview({
+      //   customerName: name.trim(),
+      //   rating,
+      //   comment: comment.trim(),
+      //   userPhone: phone.trim(),
+      // });
 
-      if (res.success) {
-        setSuccessMessage(res.message || 'আপনার মতামতের জন্য ধন্যবাদ! পর্যালোচনার পর এটি প্রদর্শিত হবে।');
-        setName('');
-        setPhone('');
-        setComment('');
-        setRating(5);
+      // if (res.success) {
+      //   setSuccessMessage(res.message || 'আপনার মতামতের জন্য ধন্যবাদ! পর্যালোচনার পর এটি প্রদর্শিত হবে।');
+      //   setName('');
+      //   setPhone('');
+      //   setComment('');
+      //   setRating(5);
 
-        setTimeout(() => {
-          setShowReviewForm(false);
-          setSuccessMessage(null);
-        }, 3000);
-      } else {
-        setErrorMessage(res.message || 'সাবমিট করতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।');
-      }
+      //   setTimeout(() => {
+      //     setShowReviewForm(false);
+      //     setSuccessMessage(null);
+      //   }, 3000);
+      // } else {
+      //   setErrorMessage(res.message || 'সাবমিট করতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।');
+      // }
     } catch (err) {
       setErrorMessage('একটি অপ্রত্যাশিত সমস্যা দেখা দিয়েছে। অনুগ্রহ করে পরে চেষ্টা করুন।');
     } finally {

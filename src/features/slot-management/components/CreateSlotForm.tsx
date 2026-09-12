@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React from 'react';
+import { Controller } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { Clock, Sparkles, AlertCircle, CheckCircle2, Info } from 'lucide-react';
-import { useCreateSlotMutation } from '../service/slotApi/slogApi';
-import { ISlotPayload } from '../slotTypes/slot.types';
+import { useCreateSlotForm } from '../slotHooks/useCreateSlotForm';
 
-// Ammenities List
 const AMENITIES_OPTIONS = [
   'জার্সি',
   'গ্লাভস',
@@ -19,153 +17,37 @@ const AMENITIES_OPTIONS = [
   'ফার্স্ট এইড বক্স',
   'রেফারি সার্ভিস',
   'দর্শকদের বসার ব্যবস্থা',
-];
+] as const;
 
-// ২৪ ঘন্টার "HH:MM" সময়কে ১২ ঘন্টার AM/PM ফরম্যাটে রূপান্তর করার ফাংশন
-const formatTo12Hour = (time24: string): string => {
-  if (!time24) return '';
-  const [hoursStr, minutesStr] = time24.split(':');
-  let hours = parseInt(hoursStr, 10);
-  const minutes = minutesStr || '00';
-  if (isNaN(hours)) return '';
+type AmenityOption = (typeof AMENITIES_OPTIONS)[number];
+type AmenitySelection = AmenityOption[];
 
-  const period = hours >= 12 ? 'PM' : 'AM';
-  hours = hours % 12 || 12;
-  const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
-  return `${formattedHours}:${minutes} ${period}`;
+type CheckboxField = {
+  value?: boolean;
+  onChange: (value: boolean) => void;
+};
+
+type MultiSelectField = {
+  value?: AmenitySelection;
+  onChange: (value: AmenitySelection) => void;
 };
 
 export default function CreateSlotForm() {
-  const [createSlot, { isLoading }] = useCreateSlotMutation();
-  const [successMsg, setSuccessMsg] = useState('');
-  const [serverError, setServerError] = useState('');
-
   const {
     control,
     handleSubmit,
-    watch,
-    setValue,
-    reset,
-    formState: { errors },
-  } = useForm<ISlotPayload>({
-    defaultValues: {
-      groundType: 'PITCH_1_SMALL',
-      groundTypeBn: 'মাঠ ১ (ছোট মাঠ)',
-      sportType: 'CRICKET',
-      sportTypeBn: 'ক্রিকেট টার্ফ',
-      packageNumber: 1,
-      packageName: 'প্যাকেজ ০১ (ছোট মাঠ)',
-      startTime: '18:00',
-      endTime: '19:30',
-      displayTime: '06:00 PM - 07:30 PM',
-      playDurationMinutes: 0,
-      bufferDurationMinutes: 0,
-      hasExtraTime: false,
-      extraTimeMinutes: 0,
-      extraTimeCharge: 0,
-      slotType: 'EVENING',
-      slotTypeBn: 'সন্ধ্যা',
-      regularPrice: 0,
-      extraGroundCharge: 0,
-      totalPrice: 0,
-      peakPrice: 0,
-      weekendPrice: 0,
-      isNightMatch: true,
-      hasRainEffect: false,
-      hasSoundSystem: true,
-      includedAmenities: ['জার্সি', 'গ্লাভস', 'বিশুদ্ধ পানি', 'চেঞ্জিং রুম'],
-      customAttributes: {
-        extraNote: 'ইভনিং ফ্লাডলাইট স্লট',
-        maxPlayer: 12,
-      },
-      status: 'AVAILABLE',
-      isActive: true,
-    },
-  });
-
-  // Watch input values for real-time calculation
-  const watchStartTime = watch('startTime');
-  const watchEndTime = watch('endTime');
-  const watchRegularPrice = watch('regularPrice');
-  const watchExtraGroundCharge = watch('extraGroundCharge');
-  const watchPlayDuration = watch('playDurationMinutes');
-  const watchBufferDuration = watch('bufferDurationMinutes');
-
-  // ==========================================
-  // [পরিবর্তন ১ & ২] সময় ইনপুট পরিবর্তন হলে সময়ের ব্যবধান, Play Duration ও Buffer Duration জেনারেট করা
-  // ==========================================
-  useEffect(() => {
-    if (watchStartTime && watchEndTime) {
-      // AM/PM Display Time ফরম্যাটিং
-      const formattedStart = formatTo12Hour(watchStartTime);
-      const formattedEnd = formatTo12Hour(watchEndTime);
-      setValue('displayTime', `${formattedStart} - ${formattedEnd}`, { shouldValidate: true });
-
-      // মোট কত মিনিট সময় তা গণনা করা
-      const [startH, startM] = watchStartTime.split(':').map(Number);
-      const [endH, endM] = watchEndTime.split(':').map(Number);
-
-      let startInMinutes = startH * 60 + startM;
-      let endInMinutes = endH * 60 + endM;
-
-      // যদি শেষ সময় রাত ১২টা পার হয়ে যায় (Midnight crossover)
-      if (endInMinutes <= startInMinutes) {
-        endInMinutes += 24 * 60;
-      }
-
-      const totalDuration = endInMinutes - startInMinutes;
-
-      // মোট সময় থেকে ৫ মিনিট বাফার টাইম বাদ দিয়ে প্লে ডিউরেশন সেট করা
-      const buffer = 5;
-      const play = totalDuration > buffer ? totalDuration - buffer : 0;
-
-      setValue('playDurationMinutes', play, { shouldValidate: true });
-      setValue('bufferDurationMinutes', buffer, { shouldValidate: true });
-    }
-  }, [watchStartTime, watchEndTime, setValue]);
-
-  // Regular Price বা Extra Ground Charge পরিবর্তন হলে Total Price অটো হিসাব
-  useEffect(() => {
-    const regPrice = Number(watchRegularPrice) || 0;
-    const extraCharge = Number(watchExtraGroundCharge) || 0;
-    setValue('totalPrice', regPrice + extraCharge, { shouldValidate: true });
-  }, [watchRegularPrice, watchExtraGroundCharge, setValue]);
-
-  const onSubmit = async (data: ISlotPayload) => {
-    setServerError('');
-    setSuccessMsg('');
-
-    // স্বয়ংক্রিয়ভাবে ইউনিক স্লট আইডি জেনারেট
-    const startFormatted = data.startTime.replace(':', '');
-    const endFormatted = data.endTime.replace(':', '');
-    const generatedSlotId = `${data.sportType}-${data.slotType}-${startFormatted}-${endFormatted}-${Date.now().toString().slice(-4)}`;
-
-    const payload: ISlotPayload = {
-      ...data,
-      slotId: generatedSlotId,
-      regularPrice: Number(data.regularPrice),
-      extraGroundCharge: Number(data.extraGroundCharge),
-      totalPrice: Number(data.totalPrice),
-    };
-
-    console.log('Submitting Payload:', payload);
-
-    try {
-      // await createSlot(payload).unwrap();
-      setSuccessMsg('নতুন টার্ফ স্লট সফলভাবে তৈরি হয়েছে!');
-      reset();
-      setTimeout(() => setSuccessMsg(''), 4000);
-    } catch (err: any) {
-      console.error('Failed to create slot:', err);
-      setServerError(err?.data?.message || 'স্লট তৈরি করতে সমস্যা হয়েছে! পরে আবার চেষ্টা করুন।');
-    }
-  };
-
-  const totalSlotDuration = (watchPlayDuration || 0) + (watchBufferDuration || 0);
+    errors,
+    isLoading,
+    successMsg,
+    serverError,
+    watchPlayDuration,
+    watchBufferDuration,
+    totalSlotDuration,
+  } = useCreateSlotForm();
 
   return (
     <div className='w-full max-w-4xl p-2 sm:p-4'>
-      {/* শিরোনাম (Bangla Heading) */}
+      {/* শিরোনাম */}
       <div className='mb-8 border-b border-slate-100 pb-5'>
         <div className='flex items-center gap-2 text-indigo-600 mb-1 font-bold text-xs uppercase tracking-wider'>
           <Sparkles className='w-4 h-4' />
@@ -177,32 +59,12 @@ export default function CreateSlotForm() {
         </p>
       </div>
 
-      {/* Success Notification */}
-      {successMsg && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className='mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-md flex items-center gap-3 text-sm font-semibold'
-        >
-          <CheckCircle2 className='w-5 h-5 text-emerald-600 flex-shrink-0' />
-          <span>{successMsg}</span>
-        </motion.div>
-      )}
 
-      {/* Error Notification */}
-      {serverError && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className='mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-md flex items-center gap-3 text-sm font-semibold'
-        >
-          <AlertCircle className='w-5 h-5 text-rose-600 flex-shrink-0' />
-          <span>{serverError}</span>
-        </motion.div>
-      )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
-        {/* ১. সাধারণ তথ্য (General Information) */}
+
+
+      <form onSubmit={handleSubmit} className='space-y-8'>
+        {/* ১. সাধারণ তথ্য */}
         <div className='space-y-4'>
           <h3 className='text-sm font-bold text-slate-800 uppercase tracking-wider border-l-4 border-indigo-600 pl-2.5'>
             ১. সাধারণ তথ্য
@@ -257,7 +119,7 @@ export default function CreateSlotForm() {
 
             {/* Slot Time Type */}
             <div>
-              <label className='block text-xs font-bold text-slate-700 mb-2'>স্লটের ক্যাটাগরি (Slot Type)</label>
+              <label className='block text-xs font-bold text-slate-700 mb-2'>স্লটের ক্যাটাগরি (Slot Time Type)</label>
               <Controller
                 name='slotType'
                 control={control}
@@ -320,14 +182,13 @@ export default function CreateSlotForm() {
           </div>
         </div>
 
-        {/* ২. সময়সূচি (Timing Setup - Dynamic Duration Setup) */}
+        {/* ২. সময়সূচি */}
         <div className='space-y-4'>
           <h3 className='text-sm font-bold text-slate-800 uppercase tracking-wider border-l-4 border-indigo-600 pl-2.5'>
             ২. সময়সূচি
           </h3>
 
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
-            {/* Start Time Input */}
             <div>
               <label className='block text-xs font-bold text-slate-700 mb-2'>শুরুর সময় (Start Time)</label>
               <Controller
@@ -344,7 +205,6 @@ export default function CreateSlotForm() {
               />
             </div>
 
-            {/* End Time Input */}
             <div>
               <label className='block text-xs font-bold text-slate-700 mb-2'>শেষের সময় (End Time)</label>
               <Controller
@@ -361,7 +221,6 @@ export default function CreateSlotForm() {
               />
             </div>
 
-            {/* [পরিবর্তন ৩] Display Time and Calculated Duration Preview Card */}
             <div className='sm:col-span-2 bg-indigo-50/60 border border-indigo-100 rounded-md p-4 space-y-3'>
               <div className='flex items-center justify-between'>
                 <div className='flex items-center gap-3'>
@@ -388,16 +247,15 @@ export default function CreateSlotForm() {
                 </span>
               </div>
 
-              {/* Dynamic Calculation Info Note */}
               <div className='pt-2 border-t border-indigo-100 flex items-start gap-2 text-xs text-indigo-950 font-medium'>
                 <Info className='w-4 h-4 text-indigo-600 flex-shrink-0 mt-0.5' />
                 <div>
                   <p>
-                    মোট সময়: <span className='font-bold text-indigo-700'>{totalSlotDuration} মিনিট</span>
+                    মোট সময়: <span className='font-bold text-indigo-700'>{totalSlotDuration} মিনিট</span>
                   </p>
                   <p className='text-[11px] text-slate-600 mt-0.5'>
-                    (খেলার সময়: <span className='font-bold text-emerald-700'>{watchPlayDuration || 0} মিনিট</span>,
-                    বাফার সময়: <span className='font-bold text-amber-700'>{watchBufferDuration || 0} মিনিট</span>)
+                    (খেলার সময়: <span className='font-bold text-emerald-700'>{watchPlayDuration || 0} মিনিট</span>,
+                    বাফার সময়: <span className='font-bold text-amber-700'>{watchBufferDuration || 0} মিনিট</span>)
                   </p>
                 </div>
               </div>
@@ -405,14 +263,13 @@ export default function CreateSlotForm() {
           </div>
         </div>
 
-        {/* ৩. মূল্য নির্ধারণ (Pricing) */}
+        {/* ৩. মূল্য নির্ধারণ */}
         <div className='space-y-4'>
           <h3 className='text-sm font-bold text-slate-800 uppercase tracking-wider border-l-4 border-indigo-600 pl-2.5'>
             ৩. মূল্য নির্ধারণ
           </h3>
 
           <div className='grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6'>
-            {/* Regular Price */}
             <div>
               <label className='block text-xs font-bold text-slate-700 mb-2'>মূল প্রাইস (Regular Price)</label>
               <Controller
@@ -436,7 +293,6 @@ export default function CreateSlotForm() {
               />
             </div>
 
-            {/* Extra Ground Charge */}
             <div>
               <label className='block text-xs font-bold text-slate-700 mb-2'>
                 অতিরিক্ত মাঠের চার্জ (Extra Ground Charge)
@@ -461,7 +317,6 @@ export default function CreateSlotForm() {
               />
             </div>
 
-            {/* Total Price */}
             <div>
               <label className='block text-xs font-bold text-slate-700 mb-2'>সর্বমোট মূল্য (Total Price)</label>
               <Controller
@@ -491,7 +346,6 @@ export default function CreateSlotForm() {
             ৪. ফিচার ও সুযোগ-সুবিধা
           </h3>
 
-          {/* Checkbox Options */}
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-4 bg-slate-50/80 border border-slate-200/80 rounded-md'>
             <Controller
               name='isNightMatch'
@@ -542,7 +396,6 @@ export default function CreateSlotForm() {
             />
           </div>
 
-          {/* Multi-Select Amenities Tag Buttons */}
           <div>
             <label className='block text-xs font-bold text-slate-700 mb-2'>অন্তর্ভুক্ত সুযোগ-সুবিধাসমূহ</label>
             <Controller
@@ -550,7 +403,7 @@ export default function CreateSlotForm() {
               control={control}
               render={({ field }) => (
                 <div className='flex flex-wrap gap-2 p-3 bg-slate-50 border border-slate-200 rounded-md'>
-                  {AMENITIES_OPTIONS.map((item) => {
+                  {AMENITIES_OPTIONS?.map((item) => {
                     const isSelected = field.value?.includes(item);
                     return (
                       <button
@@ -576,6 +429,31 @@ export default function CreateSlotForm() {
             />
           </div>
         </div>
+
+              {/* Error Notification */}
+      {serverError && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className='mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-md flex items-center gap-3 text-sm font-semibold'
+        >
+          <AlertCircle className='w-5 h-5 text-rose-600 flex-shrink-0' />
+          <span>{serverError}</span>
+        </motion.div>
+      )}
+
+
+            {/* Success Notification */}
+      {successMsg && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className='mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-md flex items-center gap-3 text-sm font-semibold'
+        >
+          <CheckCircle2 className='w-5 h-5 text-emerald-600 flex-shrink-0' />
+          <span>{successMsg}</span>
+        </motion.div>
+      )}
 
         {/* Submit Button */}
         <motion.div whileHover={{ scale: 1.005 }} whileTap={{ scale: 0.995 }} className='pt-4'>

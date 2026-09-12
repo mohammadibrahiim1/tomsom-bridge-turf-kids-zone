@@ -14,7 +14,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import { PrintableReceipt } from '../../../components/PrintableReceipt';
-import { api } from '../../../services/api';
+// import { api } from '../../../services/api';
 import { Booking, WebsiteSettings } from '../../../types';
 
 export interface CancelMessage {
@@ -56,12 +56,12 @@ export const FindYourBooking: React.FC<FindYourBookingProps> = ({ settings = {},
     setSelectedBookingForReceipt(null);
 
     try {
-      const res = await api.searchBookings(searchQuery.trim());
-      if (res?.success && Array.isArray(res.data)) {
-        setSearchResults(res.data);
-      } else {
-        setSearchResults([]);
-      }
+      // const res = await api.searchBookings(searchQuery.trim());
+      // if (res?.success && Array.isArray(res.data)) {
+      //   setSearchResults(res.data);
+      // } else {
+      //   setSearchResults([]);
+      // }
     } catch (err) {
       setSearchResults([]);
     } finally {
@@ -86,23 +86,23 @@ export const FindYourBooking: React.FC<FindYourBookingProps> = ({ settings = {},
     setCancelMessage(null);
 
     try {
-      const res = await api.cancelBooking(cancellingBooking.id, cancelPhone.trim(), cancelReason.trim());
-      if (res?.success) {
-        setCancelMessage({ type: 'success', text: res.message || 'বুকিং বাতিল সফল হয়েছে।' });
+      // const res = await api.cancelBooking(cancellingBooking.id, cancelPhone.trim(), cancelReason.trim());
+      // if (res?.success) {
+      //   setCancelMessage({ type: 'success', text: res.message || 'বুকিং বাতিল সফল হয়েছে।' });
 
-        // Dynamic search result state update
-        setSearchResults((prev) =>
-          prev.map((item) =>
-            item.id === cancellingBooking.id ? { ...item, ...res.data, bookingStatus: 'বাতিল' } : item,
-          ),
-        );
+      //   // Dynamic search result state update
+      //   setSearchResults((prev) =>
+      //     prev.map((item) =>
+      //       item.id === cancellingBooking.id ? { ...item, ...res.data, bookingStatus: 'বাতিল' } : item,
+      //     ),
+      //   );
 
-        setTimeout(() => {
-          setCancellingBooking(null);
-        }, 1800);
-      } else {
-        setCancelMessage({ type: 'error', text: res?.message || 'বুকিং বাতিল ব্যর্থ হয়েছে।' });
-      }
+      //   setTimeout(() => {
+      //     setCancellingBooking(null);
+      //   }, 1800);
+      // } else {
+      //   setCancelMessage({ type: 'error', text: res?.message || 'বুকিং বাতিল ব্যর্থ হয়েছে।' });
+      // }
     } catch (err: any) {
       setCancelMessage({ type: 'error', text: err?.message || 'নেটওয়ার্ক এরর! আবার চেষ্টা করুন।' });
     } finally {

@@ -10,6 +10,8 @@ export interface TimeSlot {
   peakPrice?: number;
   weekendPrice?: number;
   isActive: boolean;
+  currentStatus: SlotStatus;
+  displayTime:string;
 }
 
 export interface SlotLock {

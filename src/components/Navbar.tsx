@@ -27,6 +27,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { logout } from '../features/authentication/services/authSlice/authSlice';
 import { useLogoutMutation } from '../features/authentication/services/authApi/authApi';
 import { baseApi } from '../redux/baseApi/baseApi';
+import toast from 'react-hot-toast';
 
 interface NavbarProps {
   settings?: WebsiteSettings;
@@ -139,20 +140,29 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   const [logoutApi] = useLogoutMutation();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogoutAction = async () => {
-    setIsProfileDropdownOpen(false);
-    setIsMobileMenuOpen(false);
+  setIsProfileDropdownOpen(false);
+  setIsMobileMenuOpen(false);
+  setIsLoggingOut(true); // লোডিং শুরু
+  const toastId = toast.loading('লগআউট হচ্ছে...');
 
-    try {
-      await logoutApi({}).unwrap();
-    } catch (error) {
-    } finally {
-      dispatch(logout());
-      dispatch(baseApi.util.resetApiState());
-      navigate({ to: '/login' });
-    }
-  };
+  try {
+  
+    await logoutApi({}).unwrap();
+    
+    toast.success('সফলভাবে লগআউট করা হয়েছে!', { id: toastId });
+  } catch (error) {
+    console.error('Logout failed on server:', error);
+    toast.success('সফলভাবে লগআউট করা হয়েছে!', { id: toastId });
+  } finally {
+    dispatch(logout());
+    dispatch(baseApi.util.resetApiState());
+    setIsLoggingOut(false);
+    navigate({ to: '/login' });
+  }
+};
 
   const rawWhatsapp = settings.whatsapp || settings.phone || '';
   const cleanWhatsappNumber = rawWhatsapp.replace(/\D/g, '');
@@ -312,8 +322,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                                 onClick={handleLogoutAction}
                                 className='w-full flex items-center px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-md transition-colors cursor-pointer'
                               >
-                                <LogOut className='w-4 h-4 mr-2.5 text-red-600' />
-                                লগআউট করুন
+                                {isLoggingOut ? (
+    <>
+      {/* একটি ছোট স্পিনার বা লোডিং টেক্সট */}
+      <span className="animate-spin w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full"></span>
+      লগআউট হচ্ছে...
+    </>
+  ) : (
+     <>
+     <LogOut className='w-4 h-4 mr-2.5 text-red-600' />
+                                লগআউট করুন </>
+  )}
+                                {/* <LogOut className='w-4 h-4 mr-2.5 text-red-600' />
+                                লগআউট করুন */}
                               </button>
                             }
                           </div>

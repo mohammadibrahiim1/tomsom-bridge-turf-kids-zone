@@ -1,9 +1,12 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defineConfig} from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 
-export default defineConfig(() => {
+export default defineConfig(({ mode }) => {
+  // .env ফাইল থেকে ভেরিয়েবলগুলো লোড করা হচ্ছে
+  const env = loadEnv(mode, process.cwd());
+
   return {
     base: './',
     plugins: [react(), tailwindcss()],
@@ -13,10 +16,11 @@ export default defineConfig(() => {
       },
     },
     server: {
+      // .env ফাইলের VITE_PORT দিয়ে সার্ভার রান করবে (ডিফল্ট ৩০০০ বা ৫১৭৩ রাখতে পারেন)
+      port: parseInt(env.VITE_PORT || '3000'), 
+      
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
-      // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
   };

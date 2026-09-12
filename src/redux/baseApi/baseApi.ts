@@ -4,7 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import { RootState } from '../store/store';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'http://localhost:9000/api/v1',
+  baseUrl: import.meta.env.VITE_API_BASE_URL,
   credentials: 'include',
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.accessToken;
@@ -24,7 +24,7 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
   let token = state.auth.accessToken;
   const url = typeof args === 'string' ? args : args.url;
 
-  // ১. রিফ্রেশ দিলে Redux-এ টোকেন থাকবে না। তাই সরাসরি 401 এরর খাওয়া এড়াতে আগে Refresh Token চেক করে টোকেন তুলুন
+
   if (!token && !url.includes('/auth/refresh-token') && !url.includes('/auth/login')) {
     const refreshResult = await baseQuery({ url: '/auth/refresh-token', method: 'POST' }, api, extraOptions);
 
@@ -37,7 +37,7 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
     }
   }
 
-  // ২. যদি টোকেন আগে থেকেই থাকে কিন্তু এক্সপায়ার হওয়ার পথে থাকে (কমপক্ষে ৩০ সেকেন্ড)
+
   if (token && !url.includes('/auth/refresh-token')) {
     try {
       const decoded: { exp: number } = jwtDecode(token);
@@ -82,6 +82,6 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 export const baseApi = createApi({
   reducerPath: 'baseApi',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['User', 'Booking', 'Turf'],
+  tagTypes: ['User', 'Booking', 'Turf','Slots'],
   endpoints: () => ({}),
 });
