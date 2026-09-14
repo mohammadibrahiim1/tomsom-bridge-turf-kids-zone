@@ -4,7 +4,7 @@ import path from 'path';
 import { defineConfig, loadEnv } from 'vite';
 
 export default defineConfig(({ mode }) => {
-  // .env ফাইল থেকে ভেরিয়েবলগুলো লোড করা হচ্ছে
+  
   const env = loadEnv(mode, process.cwd());
 
   return {
@@ -16,10 +16,9 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      // .env ফাইলের VITE_PORT দিয়ে সার্ভার রান করবে (ডিফল্ট ৩০০০ বা ৫১৭৩ রাখতে পারেন)
-      port: parseInt(env.VITE_PORT || '3000'), 
       
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
+      port: parseInt(env.VITE_PORT || '5173'), 
+      
       hmr: process.env.DISABLE_HMR !== 'true',
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },

@@ -93,6 +93,7 @@ export const useLoginModal = ({ onClose, onOpenRegister, onForgotPassword, onSuc
         }, 1500);
       }
     } catch (err: any) {
+      console.log(err)
       const backendErrorMsg = err?.data?.message || err?.message || 'ভুল ইমেইল/ইউজারনেম বা পাসওয়ার্ড।';
       setErrorMessage(backendErrorMsg);
     }
