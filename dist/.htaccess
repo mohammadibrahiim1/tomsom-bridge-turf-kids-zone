@@ -1,0 +1,23 @@
+# Apache configuration for Tomsom Bridge Turf cPanel deployment
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-l
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# Caching & Security Headers
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-XSS-Protection "1; mode=block"
+  Header set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+
+# MIME types
+<IfModule mod_mime.c>
+  AddType application/javascript .js
+  AddType text/css .css
+</IfModule>

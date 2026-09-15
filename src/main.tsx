@@ -9,9 +9,7 @@ import { AuthInitializer } from './components/AuthInitializer/AuthInitializer.ts
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
-      {/* <AuthInitializer> */}
         <App />
-      {/* </AuthInitializer> */}
     </Provider>
   </StrictMode>,
 );
