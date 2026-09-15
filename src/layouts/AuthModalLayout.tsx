@@ -6,7 +6,7 @@ export const AuthModalLayout: React.FC = () => {
   const navigate = useNavigate();
 
   const handleClose = () => {
-    // স্মার্ট ক্লোজ: পূর্বের পেইজ ব্যাকগ্রাউন্ডে থাকলে ব্যাক করবে, না হলে হোম পেইজে নিয়ে যাবে
+    
     if (window.history.length > 2) {
       window.history.back();
     } else {

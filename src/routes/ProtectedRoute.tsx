@@ -26,14 +26,14 @@ export const ProtectedRoute = (id: string, options?: GuardOptions) => {
       // 2. Must Change Password Check
       if (isMustChangePassword && location.pathname !== '/change-password') {
         throw redirect({
-          to: '/change-password',
+          to: '/change-password' as any,
         });
       }
 
       // 3. Role-Based Access Control (RBAC) Check
       if (options?.allowedRoles && options.allowedRoles.length > 0 && !options.allowedRoles.includes(user.role)) {
         throw redirect({
-          to: '/unauthorized',
+          to: '/unauthorized' as any,
         });
       }
     },

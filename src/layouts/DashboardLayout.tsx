@@ -31,7 +31,7 @@ export const DashboardLayout: React.FC = () => {
           transition: 'padding-left 0.3s ease-in-out',
         }}
         className={`flex-1 pt-16 pb-20 lg:pb-8 transition-all duration-300 ${
-          isCollapsed ? 'lg:pl-[80px]' : 'lg:pl-[280px]'
+          isCollapsed ? 'lg:pl-20' : 'lg:pl-70'
         }`}
       >
         <div className='mx-auto bg-white w-full min-h-[calc(100vh-4rem)]'>
