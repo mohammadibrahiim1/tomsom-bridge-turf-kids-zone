@@ -5,9 +5,9 @@ import  { Toaster } from 'react-hot-toast';
 
 export default function App() {
   return (
-    <AuthInitializer>
-         <Toaster />
+  <AuthInitializer>
+      <Toaster />
       <RouterProvider router={router} />
-    </AuthInitializer>
+  </AuthInitializer>
   );
 }

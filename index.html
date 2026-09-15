@@ -1,13 +1,43 @@
 <!doctype html>
-<html lang="bn" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>টমছম ব্রিজ টার্ফ ও কিডস জোন</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>আপনার সাইটের নাম</title>
+    
+    <style>
+      #initial-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #0B0F19; /* আপনার থিম কালার */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 999999;
+        color: white;
+        font-family: sans-serif;
+        transition: opacity 0.4s ease-out;
+      }
+      .loader-img {
+        width: 120px;
+        height: auto;
+        margin-bottom: 15px;
+      }
+    </style>
   </head>
-  <body class="bg-slate-950 text-slate-100 antialiased selection:bg-red-500 selection:text-white">
+  <body>
+    <!-- পার্মানেন্ট GIF প্রি-লোডার -->
+    <div id="initial-loader">
+      <img src="/loaders/tomsom_turf_loader.gif" alt="Loading..." class="loader-img" />
+      <p>অনুগ্রহ করে অপেক্ষা করুন...</p>
+    </div>
+
     <div id="root"></div>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

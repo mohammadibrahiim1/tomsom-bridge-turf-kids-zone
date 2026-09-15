@@ -31,7 +31,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({
   return (
     <div className='space-y-10 pb-16'>
       {/* 1. Dedicated Header */}
-      <div className='bg-gradient-to-b from-red-50/70 to-white py-10 border-b border-gray-100'>
+      <div className='bg-linear-to-b from-red-50/70 to-white py-10 border-b border-gray-100'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='flex items-center justify-between flex-wrap gap-4'>
             <div>
