@@ -7,6 +7,7 @@ import { useLogoutMutation } from '../../authentication/services/authApi/authApi
 import { logout } from '../../authentication/services/authSlice/authSlice';
 import { baseApi } from '../../../redux/baseApi/baseApi';
 import { useDispatch } from 'react-redux';
+import toast from 'react-hot-toast';
 
 interface DashboardSidebarProps {
   isCollapsed: boolean;
@@ -20,18 +21,24 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isCollapsed 
 
   const [logoutApi] = useLogoutMutation();
 
-  const onLogout = async () => {
-    setIsMoreOpen(false);
+const onLogout = async () => {
+  
 
-    try {
-      await logoutApi({}).unwrap();
-    } catch (error) {
-    } finally {
-      dispatch(logout());
-      dispatch(baseApi.util.resetApiState());
-      navigate({ to: '/login' });
-    }
-  };
+  try {
+    await logoutApi({}).unwrap();
+  } catch (error) {
+    console.error('Logout failed on server:', error);
+  } finally {
+    // ১. রেডিক্স অথ স্টেট ক্লিয়ার
+    dispatch(logout());
+
+    // ২. আরটিকে কোয়েরি ক্যাশ ক্লিয়ার
+    dispatch(baseApi.util.resetApiState());
+
+    // ৩. এসপিএ নেভিগেশন বাদ দিয়ে সরাসরি ফ্রেশ রিলোড দিয়ে হোম পেজে পাঠানো
+    window.location.href = '/'; 
+  }
+};
 
   // Mobile/Pad Navbar Visible Item Split (First 4 items, rest in sheet)
   const visibleNavItems = DashboardSidebarMenuItems.slice(0, 4);
@@ -49,7 +56,7 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isCollapsed 
         {/* Branding Area */}
         <div className='h-16 flex items-center px-4 border-b border-emerald-800/80 shrink-0'>
           <Link to={'/'} className='flex items-center gap-3 overflow-hidden'>
-            <div className='w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center font-black text-white shadow-lg shadow-emerald-900/40 shrink-0 border border-emerald-400/30'>
+            <div className='w-10 h-10 bg-linear-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center font-black text-white shadow-lg shadow-emerald-900/40 shrink-0 border border-emerald-400/30'>
               TB
             </div>
             <AnimatePresence>
@@ -85,7 +92,7 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isCollapsed 
                 to={item.to as any}
                 className={`relative flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-xs font-bold transition-all duration-200 group ${
                   isActive
-                    ? 'bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-lg shadow-emerald-950/50 border border-emerald-400/20'
+                    ? 'bg-linear-to-r from-emerald-600 to-green-600 text-white shadow-lg shadow-emerald-950/50 border border-emerald-400/20'
                     : 'text-emerald-200/80 hover:bg-emerald-900/60 hover:text-white'
                 }`}
               >
@@ -144,12 +151,12 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isCollapsed 
             <Link
               key={item.id}
               to={item.to as any}
-              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl text-[10px] font-bold transition-all min-w-[64px] ${
+              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl text-[10px] font-bold transition-all min-w-16 ${
                 isActive ? 'text-green-400 bg-emerald-900/60' : 'text-emerald-300/70 hover:text-emerald-100'
               }`}
             >
               <Icon className={`w-5 h-5 mb-0.5 ${isActive ? 'text-green-400' : 'text-emerald-300/70'}`} />
-              <span className='truncate max-w-[60px] text-center leading-tight'>{item.label}</span>
+              <span className='truncate max-w-15 text-center leading-tight'>{item.label}</span>
             </Link>
           );
         })}
@@ -157,12 +164,12 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isCollapsed 
         {/* More Dropdown Trigger */}
         <button
           onClick={() => setIsMoreOpen(true)}
-          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl text-[10px] font-bold transition-all min-w-[64px] ${
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl text-[10px] font-bold transition-all min-w-16 ${
             isMoreOpen ? 'text-green-400 bg-emerald-900/60' : 'text-emerald-300/70 hover:text-emerald-100'
           }`}
         >
           <MoreHorizontal className='w-5 h-5 mb-0.5' />
-          <span className='truncate max-w-[60px] text-center leading-tight'>আরও</span>
+          <span className='truncate max-w-15 text-center leading-tight'>আরও</span>
         </button>
       </div>
 
@@ -214,7 +221,7 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isCollapsed 
                       onClick={() => setIsMoreOpen(false)}
                       className={`flex items-center gap-3 p-3 rounded-xl border text-xs font-bold transition-all ${
                         isActive
-                          ? 'bg-gradient-to-r from-emerald-600 to-green-600 border-emerald-400/30 text-white shadow-md'
+                          ? 'bg-linear-to-r from-emerald-600 to-green-600 border-emerald-400/30 text-white shadow-md'
                           : 'bg-emerald-900/50 border-emerald-800/80 text-emerald-200 hover:bg-emerald-900 hover:text-white'
                       }`}
                     >

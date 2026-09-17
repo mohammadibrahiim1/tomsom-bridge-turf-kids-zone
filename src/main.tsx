@@ -16,10 +16,3 @@ createRoot(document.getElementById('root')!).render(
 
 
 
-const loader = document.getElementById('initial-loader');
-if (loader) {
-  loader.style.opacity = '0';
-  setTimeout(() => {
-    loader.remove();
-  }, 400);
-}

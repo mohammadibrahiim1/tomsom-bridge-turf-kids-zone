@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, useNavigate } from '@tanstack/react-router';
 import { useAppDispatch, useAppSelector } from '../redux/store/store';
-import { logout } from '../features/authentication/services/authSlice/authSlice';
 import { DashboardHeader } from '../features/dashboard/components/DashboardHeader';
 import { DashboardSidebar } from '../features/dashboard/components/DashboardSidebar';
 

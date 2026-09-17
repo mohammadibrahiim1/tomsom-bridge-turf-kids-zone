@@ -39,18 +39,24 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ isCollapsed, s
 
   const [logoutApi] = useLogoutMutation();
 
-  const onLogout = async () => {
-    setIsDropdownOpen(false);
+const onLogout = async () => {
+  setIsDropdownOpen(false); // বা setIsMoreOpen(false)
 
-    try {
-      await logoutApi({}).unwrap();
-    } catch (error) {
-    } finally {
-      dispatch(logout());
-      dispatch(baseApi.util.resetApiState());
-      navigate({ to: '/login' });
-    }
-  };
+  try {
+    await logoutApi({}).unwrap();
+  } catch (error) {
+    console.error('Logout failed on server:', error);
+  } finally {
+    // ১. রেডিক্স অথ স্টেট ক্লিয়ার
+    dispatch(logout());
+
+    // ২. আরটিকে কোয়েরি ক্যাশ ক্লিয়ার
+    dispatch(baseApi.util.resetApiState());
+
+    // ৩. এসপিএ নেভিগেশন বাদ দিয়ে সরাসরি ফ্রেশ রিলোড দিয়ে হোম পেজে পাঠানো
+    window.location.href = '/'; 
+  }
+};
 
   return (
     <header
@@ -58,15 +64,15 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ isCollapsed, s
         transition: 'left 0.3s ease-in-out',
       }}
       className={`fixed top-0 right-0 z-30 h-16 bg-emerald-950/95 backdrop-blur-md border-b border-emerald-800/80 px-4 sm:px-6 flex items-center justify-between shadow-md transition-all duration-300 left-0 ${
-        isCollapsed ? 'lg:left-[80px]' : 'lg:left-[280px]'
+        isCollapsed ? 'lg:left-20' : 'lg:left-70'
       }`}
     >
       {/* Mobile & Tablet Branding (Hidden on Desktop) */}
       <div className='flex lg:hidden items-center gap-2.5'>
-        <div className='w-8 h-8 bg-gradient-to-br from-emerald-500 to-green-600 rounded-lg flex items-center justify-center font-black text-xs text-white shadow-md border border-emerald-400/30'>
+        <div className='w-8 h-8 bg-linear-to-br from-emerald-500 to-green-600 rounded-lg flex items-center justify-center font-black text-xs text-white shadow-md border border-emerald-400/30'>
           TB
         </div>
-        <span className='font-bold text-xs sm:text-sm text-emerald-50 truncate max-w-[150px]'>টমছম ব্রিজ টার্ফ</span>
+        <span className='font-bold text-xs sm:text-sm text-emerald-50 truncate max-w-37.5'>টমছম ব্রিজ টার্ফ</span>
       </div>
 
       {/* Desktop Large Device: Sidebar Expand/Collapse Button & Title */}

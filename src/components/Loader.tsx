@@ -1,6 +1,6 @@
-export default function Preloader() {
+export default function Loader() {
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center bg-slate-950">
       <img
         src="/loaders/tomsom_turf_loader.gif"
         alt="Please wait..."

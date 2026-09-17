@@ -28,6 +28,7 @@ import { logout } from '../features/authentication/services/authSlice/authSlice'
 import { useLogoutMutation } from '../features/authentication/services/authApi/authApi';
 import { baseApi } from '../redux/baseApi/baseApi';
 import toast from 'react-hot-toast';
+import { openAuthModal } from '../redux/features/modal/modalSlice';
 
 interface NavbarProps {
   settings?: WebsiteSettings;
@@ -140,27 +141,32 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   const [logoutApi] = useLogoutMutation();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogoutAction = async () => {
+const handleLogoutAction = async () => {
   setIsProfileDropdownOpen(false);
   setIsMobileMenuOpen(false);
-  setIsLoggingOut(true); // লোডিং শুরু
-  const toastId = toast.loading('লগআউট হচ্ছে...');
+  setIsLoggingOut(true);
+
+  const toastId = toast.loading('Please wait...');
 
   try {
-  
     await logoutApi({}).unwrap();
-    
-    toast.success('সফলভাবে লগআউট করা হয়েছে!', { id: toastId });
   } catch (error) {
     console.error('Logout failed on server:', error);
-    toast.success('সফলভাবে লগআউট করা হয়েছে!', { id: toastId });
   } finally {
+    
     dispatch(logout());
+
+    
     dispatch(baseApi.util.resetApiState());
+
     setIsLoggingOut(false);
-    navigate({ to: '/login' });
+
+    toast.success('See you again!', {
+      id: toastId,
+    });
+    window.location.href = '/';
   }
 };
 
@@ -179,7 +185,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <Sparkles className='w-3 h-3 mr-1' />
                   ঘোষণা
                 </span>
-                <span className='text-white/95 font-medium truncate max-w-[200px] xs:max-w-xs sm:max-w-md lg:max-w-xl text-[11px] sm:text-xs'>
+                <span className='text-white/95 font-medium truncate max-w-50 xs:max-w-xs sm:max-w-md lg:max-w-xl text-[11px] sm:text-xs'>
                   {settings?.topBarText || settings.addressBn}
                 </span>
               </div>
@@ -222,7 +228,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className='flex items-center space-x-2 sm:space-x-3 group cursor-pointer overflow-hidden'
               onClick={() => handleItemClick('hero')}
             >
-              <div className='w-9 h-9 sm:w-11 sm:h-11 bg-[#990000] rounded-md sm:rounded-2xl flex-shrink-0 flex items-center justify-center text-white font-black text-base sm:text-xl shadow-md ring-2 ring-red-100 group-hover:scale-105 transition-transform'>
+              <div className='w-9 h-9 sm:w-11 sm:h-11 bg-[#990000] rounded-md sm:rounded-2xl shrink-0 flex items-center justify-center text-white font-black text-base sm:text-xl shadow-md ring-2 ring-red-100 group-hover:scale-105 transition-transform'>
                 TB
               </div>
               <div className='truncate'>
@@ -283,7 +289,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <div className='w-7 h-7 rounded-lg bg-[#2E7D32] text-white flex items-center justify-center font-bold text-xs shadow-xs'>
                         {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
                       </div>
-                      <span className='block text-xs font-bold text-slate-900 max-w-[100px] truncate'>
+                      <span className='block text-xs font-bold text-slate-900 max-w-25 truncate'>
                         {currentUser?.name}
                       </span>
                       <ChevronDown
@@ -533,7 +539,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               {isActive && <span className='absolute top-0 w-8 h-1 bg-[#990000] rounded-full'></span>}
               <IconComponent className={`w-5 h-5 mb-0.5 ${isActive ? 'text-[#990000]' : 'text-[#2E7D32]'}`} />
-              <span className='text-[10px] font-black tracking-tight truncate max-w-[70px]'>{item.label}</span>
+              <span className='text-[10px] font-black tracking-tight truncate max-w-17.5'>{item.label}</span>
             </button>
           );
         })}

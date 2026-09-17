@@ -24,20 +24,33 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
   let token = state.auth.accessToken;
   const url = typeof args === 'string' ? args : args.url;
 
+  const isAuthEndpoint = 
+    url.includes('/auth/login') || 
+    url.includes('/auth/register') || 
+    url.includes('/auth/logout') || 
+    url.includes('/auth/refresh-token');
 
-  if (!token && !url.includes('/auth/refresh-token') && !url.includes('/auth/login')) {
+  // টোকেন না থাকলে এবং অথ এন্ডপয়েন্ট না হলে রিফ্রেশ টোকেন কল করা হবে
+  if (!token && !isAuthEndpoint) {
     const refreshResult = await baseQuery({ url: '/auth/refresh-token', method: 'POST' }, api, extraOptions);
 
     if (refreshResult.data) {
       const newAccessToken = (refreshResult.data as any).data?.accessToken;
       if (newAccessToken) {
         api.dispatch(setAccessToken(newAccessToken));
-        token = newAccessToken; // নতুন টোকেন আপডেট হলো
+        token = newAccessToken;
       }
+    } else {
+      const errorStatus = refreshResult.error?.status;
+      // শুধুমাত্র টোকেন ইনভ্যালিড (401/403) হলেই লগআউট হবে
+      if (errorStatus === 401 || errorStatus === 403) {
+        api.dispatch(logout());
+      }
+      return refreshResult;
     }
   }
 
-
+  // টোকেনের মেয়াদ চেক করা এবং ৩০ সেকেন্ডের কম থাকলে রিন্যু করা
   if (token && !url.includes('/auth/refresh-token')) {
     try {
       const decoded: { exp: number } = jwtDecode(token);
@@ -54,15 +67,14 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
         }
       }
     } catch (err) {
-      // Decode Error হ্যান্ডেলিং
+      // Decode error ignore
     }
   }
 
-  // ৩. মূল API কল করা
   let result = await baseQuery(args, api, extraOptions);
 
-  // ৪. যদি তবুও ৪০১ আসে তাহলে শেষ চেষ্টা হিসেবে পুনরায় RefreshToken ট্রাই করা
-  if (result.error && result.error.status === 401 && !url.includes('/auth/refresh-token')) {
+  // যদি রিকোয়েস্টে 401 এরর আসে তবে একবার রিফ্রেশ ট্রাই করা
+  if (result.error && result.error.status === 401 && !isAuthEndpoint) {
     const refreshResult = await baseQuery({ url: '/auth/refresh-token', method: 'POST' }, api, extraOptions);
 
     if (refreshResult.data) {
@@ -82,6 +94,6 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 export const baseApi = createApi({
   reducerPath: 'baseApi',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['User', 'Booking', 'Turf','Slots'],
+  tagTypes: ['User', 'Booking', 'Turf', 'Slots'],
   endpoints: () => ({}),
 });
