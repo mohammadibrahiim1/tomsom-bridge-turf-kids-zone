@@ -11,7 +11,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import type { WebsiteSettings, TurfInfo } from '../../../types';
-import { TurfBookingFlow } from '../../../components/TurfBookingFlow';
+import { TurfBookingFlow } from '../../slot-booking-management/pages/SlotBookingManagement';
 
 export interface BookingPageProps {
   settings?: WebsiteSettings;

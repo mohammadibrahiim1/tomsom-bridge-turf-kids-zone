@@ -33,7 +33,7 @@ import {
   Key,
   FileSpreadsheet,
 } from 'lucide-react';
-import { api } from '../../services/api';
+// import { api } from '../../services/api';
 import { exportBookingsToExcel, exportCustomersToExcel, exportFinancialReportToExcel } from '../../utils/excelExport';
 import { downloadCpanelZip } from '../../utils/cpanelExporter';
 import type {
@@ -181,16 +181,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, onL
       showToast('নতুন পাসওয়ার্ড দুটি মিলছে না।', true);
       return;
     }
-    try {
-      const res = await api.changePassword(newPassword, confirmPassword);
-      if (res.success) {
-        showToast('অ্যাডমিন পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে!');
-        setNewPassword('');
-        setConfirmPassword('');
-      }
-    } catch (err: any) {
-      showToast(err.message || 'পাসওয়ার্ড পরিবর্তন ব্যর্থ হয়েছে', true);
-    }
+    // try {
+    //   const res = await api.changePassword(newPassword, confirmPassword);
+    //   if (res.success) {
+    //     showToast('অ্যাডমিন পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে!');
+    //     setNewPassword('');
+    //     setConfirmPassword('');
+    //   }
+    // } catch (err: any) {
+    //   showToast(err.message || 'পাসওয়ার্ড পরিবর্তন ব্যর্থ হয়েছে', true);
+    // }
   };
 
   // Load Tab Data
@@ -210,79 +210,79 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, onL
 
   const loadTabData = async (tab: TabType) => {
     setIsLoading(true);
-    try {
-      if (tab === 'overview') {
-        const res = await api.getDashboardStats();
-        if (res.success) setStats(res.data);
-      } else if (tab === 'bookings') {
-        const res = await api.getAdminBookings({
-          status: bookingFilterStatus,
-          search: bookingSearch,
-        });
-        if (res.success) setBookings(res.data);
-        const sltRes = await api.getAdminSlots();
-        if (sltRes.success) setSlots(sltRes.data);
-      } else if (tab === 'slots') {
-        const res = await api.getAdminSlots();
-        if (res.success) setSlots(res.data);
-      } else if (tab === 'settings') {
-        const cfg = await api.getConfig();
-        if (cfg.success) {
-          setSettings(cfg.data.settings);
-          setTurfInfo(cfg.data.turfInfo);
-        }
-      } else if (tab === 'kids') {
-        const cfg = await api.getConfig();
-        if (cfg.success) setKidsZoneInfo(cfg.data.kidsZoneInfo);
-      } else if (tab === 'coupons') {
-        const cp = await api.getAdminCoupons();
-        const of = await api.getAdminOffers();
-        if (cp.success) setCoupons(cp.data);
-        if (of.success) setOffers(of.data);
-      } else if (tab === 'customers') {
-        const res = await api.getCustomers();
-        if (res.success) setCustomers(res.data);
-      } else if (tab === 'events') {
-        const res = await api.getEvents();
-        if (res.success) setEvents(res.data);
-      } else if (tab === 'gallery') {
-        const res = await api.getGallery();
-        if (res.success) setGallery(res.data);
-      } else if (tab === 'reviews') {
-        const res = await api.getAllAdminReviews();
-        if (res.success) setReviews(res.data);
-      } else if (tab === 'faqs') {
-        const res = await api.getConfig();
-        if (res.success) setFaqs(res.data.faqs);
-      } else if (tab === 'reports') {
-        const res = await api.getReports();
-        if (res.success) setReports(res.data);
-      } else if (tab === 'staff') {
-        const res = await api.getStaff();
-        if (res.success) setStaff(res.data);
-      } else if (tab === 'logs') {
-        const res = await api.getActivityLogs();
-        if (res.success) setActivityLogs(res.data);
-      }
-    } catch (err: any) {
-      showToast(err.message || 'ডাটা লোড করতে ব্যর্থ', true);
-    } finally {
-      setIsLoading(false);
-    }
+    // try {
+    //   if (tab === 'overview') {
+    //     const res = await api.getDashboardStats();
+    //     if (res.success) setStats(res.data);
+    //   } else if (tab === 'bookings') {
+    //     const res = await api.getAdminBookings({
+    //       status: bookingFilterStatus,
+    //       search: bookingSearch,
+    //     });
+    //     if (res.success) setBookings(res.data);
+    //     const sltRes = await api.getAdminSlots();
+    //     if (sltRes.success) setSlots(sltRes.data);
+    //   } else if (tab === 'slots') {
+    //     const res = await api.getAdminSlots();
+    //     if (res.success) setSlots(res.data);
+    //   } else if (tab === 'settings') {
+    //     const cfg = await api.getConfig();
+    //     if (cfg.success) {
+    //       setSettings(cfg.data.settings);
+    //       setTurfInfo(cfg.data.turfInfo);
+    //     }
+    //   } else if (tab === 'kids') {
+    //     const cfg = await api.getConfig();
+    //     if (cfg.success) setKidsZoneInfo(cfg.data.kidsZoneInfo);
+    //   } else if (tab === 'coupons') {
+    //     const cp = await api.getAdminCoupons();
+    //     const of = await api.getAdminOffers();
+    //     if (cp.success) setCoupons(cp.data);
+    //     if (of.success) setOffers(of.data);
+    //   } else if (tab === 'customers') {
+    //     const res = await api.getCustomers();
+    //     if (res.success) setCustomers(res.data);
+    //   } else if (tab === 'events') {
+    //     const res = await api.getEvents();
+    //     if (res.success) setEvents(res.data);
+    //   } else if (tab === 'gallery') {
+    //     const res = await api.getGallery();
+    //     if (res.success) setGallery(res.data);
+    //   } else if (tab === 'reviews') {
+    //     const res = await api.getAllAdminReviews();
+    //     if (res.success) setReviews(res.data);
+    //   } else if (tab === 'faqs') {
+    //     const res = await api.getConfig();
+    //     if (res.success) setFaqs(res.data.faqs);
+    //   } else if (tab === 'reports') {
+    //     const res = await api.getReports();
+    //     if (res.success) setReports(res.data);
+    //   } else if (tab === 'staff') {
+    //     const res = await api.getStaff();
+    //     if (res.success) setStaff(res.data);
+    //   } else if (tab === 'logs') {
+    //     const res = await api.getActivityLogs();
+    //     if (res.success) setActivityLogs(res.data);
+    //   }
+    // } catch (err: any) {
+    //   showToast(err.message || 'ডাটা লোড করতে ব্যর্থ', true);
+    // } finally {
+    //   setIsLoading(false);
+    // }
   };
 
   // Status Updater
   const handleUpdateBookingStatus = async (id: string, bStatus: string, pStatus?: string) => {
-    try {
-      const res = await api.updateBookingStatus(id, bStatus, pStatus);
-      if (res.success) {
-        showToast('বুকিং স্ট্যাটাস আপডেট হয়েছে');
-        loadTabData('bookings');
-        onRefreshPublicData();
-      }
-    } catch (err: any) {
-      showToast(err.message, true);
-    }
+    // try {
+    //   const res = await api.updateBookingStatus(id, bStatus, pStatus);
+    //   if (res.success) {
+    //     showToast('বুকিং স্ট্যাটাস আপডেট হয়েছে');
+    //     loadTabData('bookings');
+    //     onRefreshPublicData();
+    //   }
+    // } catch (err: any) {
+    //   showToast(err.message, true);
+    // }
   };
 
   // Create Manual Booking
@@ -293,243 +293,243 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, onL
       return;
     }
 
-    try {
-      const res = await api.createManualBooking({
-        ...manualData,
-        slotDuration: '৫৫ মিনিট খেলা + ৫ মিনিট ইন/আউট',
-        type: 'টার্ফ',
-        discountAmount: 0,
-        totalAmount: manualData.amount,
-      });
-      if (res.success) {
-        showToast('ম্যানুয়াল বুকিং যোগ করা হয়েছে');
-        setShowManualBookingModal(false);
-        loadTabData('bookings');
-        onRefreshPublicData();
-      }
-    } catch (err: any) {
-      showToast(err.message, true);
-    }
+    // try {
+    //   const res = await api.createManualBooking({
+    //     ...manualData,
+    //     slotDuration: '৫৫ মিনিট খেলা + ৫ মিনিট ইন/আউট',
+    //     type: 'টার্ফ',
+    //     discountAmount: 0,
+    //     totalAmount: manualData.amount,
+    //   });
+    //   if (res.success) {
+    //     showToast('ম্যানুয়াল বুকিং যোগ করা হয়েছে');
+    //     setShowManualBookingModal(false);
+    //     loadTabData('bookings');
+    //     onRefreshPublicData();
+    //   }
+    // } catch (err: any) {
+    //   showToast(err.message, true);
+    // }
   };
 
   // Save Settings
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!settings) return;
-    try {
-      const res = await api.updateSettings(settings);
-      if (res.success) {
-        showToast('সেটিংস সফলভাবে সংরক্ষিত হয়েছে');
-        onRefreshPublicData();
-      }
-    } catch (err: any) {
-      showToast(err.message, true);
-    }
+    // try {
+    //   const res = await api.updateSettings(settings);
+    //   if (res.success) {
+    //     showToast('সেটিংস সফলভাবে সংরক্ষিত হয়েছে');
+    //     onRefreshPublicData();
+    //   }
+    // } catch (err: any) {
+    //   showToast(err.message, true);
+    // }
   };
 
   // Save Turf Info
   const handleSaveTurf = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!turfInfo) return;
-    try {
-      const res = await api.updateTurf(turfInfo);
-      if (res.success) {
-        showToast('টার্ফের বিবরণ সংরক্ষিত হয়েছে');
-        onRefreshPublicData();
-      }
-    } catch (err: any) {
-      showToast(err.message, true);
-    }
+    // try {
+    //   const res = await api.updateTurf(turfInfo);
+    //   if (res.success) {
+    //     showToast('টার্ফের বিবরণ সংরক্ষিত হয়েছে');
+    //     onRefreshPublicData();
+    //   }
+    // } catch (err: any) {
+    //   showToast(err.message, true);
+    // }
   };
 
   // Save Kids Zone Info
   const handleSaveKidsZone = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!kidsZoneInfo) return;
-    try {
-      const res = await api.updateKidsZone(kidsZoneInfo);
-      if (res.success) {
-        showToast('কিডস জোন তথ্য সংরক্ষিত হয়েছে');
-        onRefreshPublicData();
-      }
-    } catch (err: any) {
-      showToast(err.message, true);
-    }
+    // try {
+    //   const res = await api.updateKidsZone(kidsZoneInfo);
+    //   if (res.success) {
+    //     showToast('কিডস জোন তথ্য সংরক্ষিত হয়েছে');
+    //     onRefreshPublicData();
+    //   }
+    // } catch (err: any) {
+    //   showToast(err.message, true);
+    // }
   };
 
   // Time Slot Save
   const handleSaveSlot = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingSlot) return;
-    try {
-      if (editingSlot.id) {
-        await api.updateSlot(editingSlot.id, editingSlot);
-      } else {
-        await api.createSlot(editingSlot);
-      }
-      showToast('স্লট সফলভাবে সংরক্ষিত হয়েছে');
-      setEditingSlot(null);
-      loadTabData('slots');
-      onRefreshPublicData();
-    } catch (err: any) {
-      showToast(err.message, true);
-    }
+    // try {
+    //   if (editingSlot.id) {
+    //     await api.updateSlot(editingSlot.id, editingSlot);
+    //   } else {
+    //     await api.createSlot(editingSlot);
+    //   }
+    //   showToast('স্লট সফলভাবে সংরক্ষিত হয়েছে');
+    //   setEditingSlot(null);
+    //   loadTabData('slots');
+    //   onRefreshPublicData();
+    // } catch (err: any) {
+    //   showToast(err.message, true);
+    // }
   };
 
   const handleDeleteSlot = async (id: string) => {
     if (!confirm('আপনি কি নিশ্চিত এই স্লটটি মুছে ফেলতে চান?')) return;
-    try {
-      await api.deleteSlot(id);
-      showToast('স্লট মুছে ফেলা হয়েছে');
-      loadTabData('slots');
-      onRefreshPublicData();
-    } catch (err: any) {
-      showToast(err.message, true);
-    }
+    // try {
+    //   await api.deleteSlot(id);
+    //   showToast('স্লট মুছে ফেলা হয়েছে');
+    //   loadTabData('slots');
+    //   onRefreshPublicData();
+    // } catch (err: any) {
+    //   showToast(err.message, true);
+    // }
   };
 
   // Coupon Save
   const handleSaveCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingCoupon || !editingCoupon.code) return;
-    try {
-      await api.saveCoupon(editingCoupon);
-      showToast('কুপন সংরক্ষিত হয়েছে');
-      setEditingCoupon(null);
-      loadTabData('coupons');
-    } catch (err: any) {
-      showToast(err.message, true);
-    }
+    // try {
+    //   await api.saveCoupon(editingCoupon);
+    //   showToast('কুপন সংরক্ষিত হয়েছে');
+    //   setEditingCoupon(null);
+    //   loadTabData('coupons');
+    // } catch (err: any) {
+    //   showToast(err.message, true);
+    // }
   };
 
   const handleDeleteCoupon = async (id: string) => {
     if (!confirm('কুপনটি মুছে ফেলতে চান?')) return;
-    try {
-      await api.deleteCoupon(id);
-      showToast('কুপন মুছে ফেলা হয়েছে');
-      loadTabData('coupons');
-    } catch (err: any) {
-      showToast(err.message, true);
-    }
+    // try {
+    //   await api.deleteCoupon(id);
+    //   showToast('কুপন মুছে ফেলা হয়েছে');
+    //   loadTabData('coupons');
+    // } catch (err: any) {
+    //   showToast(err.message, true);
+    // }
   };
 
   // Special Offer Save
   const handleSaveOffer = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingOffer) return;
-    try {
-      await api.saveOffer(editingOffer);
-      showToast('অফার সংরক্ষিত হয়েছে');
-      setEditingOffer(null);
-      loadTabData('coupons');
-      onRefreshPublicData();
-    } catch (err: any) {
-      showToast(err.message, true);
-    }
+    // try {
+    //   await api.saveOffer(editingOffer);
+    //   showToast('অফার সংরক্ষিত হয়েছে');
+    //   setEditingOffer(null);
+    //   loadTabData('coupons');
+    //   onRefreshPublicData();
+    // } catch (err: any) {
+    //   showToast(err.message, true);
+    // }
   };
 
   // Event Save
   const handleSaveEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingEvent) return;
-    try {
-      await api.saveEvent(editingEvent);
-      showToast('ইভেন্ট সংরক্ষিত হয়েছে');
-      setEditingEvent(null);
-      loadTabData('events');
-      onRefreshPublicData();
-    } catch (err: any) {
-      showToast(err.message, true);
-    }
+    // try {
+    //   await api.saveEvent(editingEvent);
+    //   showToast('ইভেন্ট সংরক্ষিত হয়েছে');
+    //   setEditingEvent(null);
+    //   loadTabData('events');
+    //   onRefreshPublicData();
+    // } catch (err: any) {
+    //   showToast(err.message, true);
+    // }
   };
 
   const handleDeleteEvent = async (id: string) => {
     if (!confirm('ইভেন্টটি মুছে ফেলতে চান?')) return;
-    try {
-      await api.deleteEvent(id);
-      showToast('ইভেন্ট মুছে ফেলা হয়েছে');
-      loadTabData('events');
-      onRefreshPublicData();
-    } catch (err: any) {
-      showToast(err.message, true);
-    }
+    // try {
+    //   await api.deleteEvent(id);
+    //   showToast('ইভেন্ট মুছে ফেলা হয়েছে');
+    //   loadTabData('events');
+    //   onRefreshPublicData();
+    // } catch (err: any) {
+    //   showToast(err.message, true);
+    // }
   };
 
   // Gallery Save
   const handleSaveGallery = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newGalleryItem.imageUrl) return;
-    try {
-      await api.saveGalleryItem(newGalleryItem);
-      showToast('ছবি গ্যালারিতে যোগ হয়েছে');
-      setShowGalleryModal(false);
-      setNewGalleryItem({ title: '', category: 'টার্ফ', imageUrl: '' });
-      loadTabData('gallery');
-      onRefreshPublicData();
-    } catch (err: any) {
-      showToast(err.message, true);
-    }
+    // try {
+    //   await api.saveGalleryItem(newGalleryItem);
+    //   showToast('ছবি গ্যালারিতে যোগ হয়েছে');
+    //   setShowGalleryModal(false);
+    //   setNewGalleryItem({ title: '', category: 'টার্ফ', imageUrl: '' });
+    //   loadTabData('gallery');
+    //   onRefreshPublicData();
+    // } catch (err: any) {
+    //   showToast(err.message, true);
+    // }
   };
 
   const handleDeleteGallery = async (id: string) => {
     if (!confirm('ছবিটি ডিলিট করবেন?')) return;
-    try {
-      await api.deleteGalleryItem(id);
-      showToast('ছবি মুছে ফেলা হয়েছে');
-      loadTabData('gallery');
-      onRefreshPublicData();
-    } catch (err: any) {
-      showToast(err.message, true);
-    }
+    // try {
+    //   await api.deleteGalleryItem(id);
+    //   showToast('ছবি মুছে ফেলা হয়েছে');
+    //   loadTabData('gallery');
+    //   onRefreshPublicData();
+    // } catch (err: any) {
+    //   showToast(err.message, true);
+    // }
   };
 
   // Review Status
   const handleUpdateReviewStatus = async (id: string, status: string) => {
-    try {
-      await api.updateReviewStatus(id, status);
-      showToast('রিভিউ আপডেট হয়েছে');
-      loadTabData('reviews');
-      onRefreshPublicData();
-    } catch (err: any) {
-      showToast(err.message, true);
-    }
+    // try {
+    //   await api.updateReviewStatus(id, status);
+    //   showToast('রিভিউ আপডেট হয়েছে');
+    //   loadTabData('reviews');
+    //   onRefreshPublicData();
+    // } catch (err: any) {
+    //   showToast(err.message, true);
+    // }
   };
 
   const handleDeleteReview = async (id: string) => {
     if (!confirm('রিভিউ মুছে ফেলবেন?')) return;
-    try {
-      await api.deleteReview(id);
-      showToast('রিভিউ মোছা হয়েছে');
-      loadTabData('reviews');
-      onRefreshPublicData();
-    } catch (err: any) {
-      showToast(err.message, true);
-    }
+    // try {
+    //   await api.deleteReview(id);
+    //   showToast('রিভিউ মোছা হয়েছে');
+    //   loadTabData('reviews');
+    //   onRefreshPublicData();
+    // } catch (err: any) {
+    //   showToast(err.message, true);
+    // }
   };
 
   // Staff Save
   const handleCreateStaff = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await api.createStaff(newStaffData);
-      showToast('নতুন স্টাফ অ্যাকাউন্ট তৈরি হয়েছে');
-      setShowStaffModal(false);
-      setNewStaffData({ username: '', name: '', email: '', role: 'Staff', password: '' });
-      loadTabData('staff');
-    } catch (err: any) {
-      showToast(err.message, true);
-    }
+    // try {
+    //   await api.createStaff(newStaffData);
+    //   showToast('নতুন স্টাফ অ্যাকাউন্ট তৈরি হয়েছে');
+    //   setShowStaffModal(false);
+    //   setNewStaffData({ username: '', name: '', email: '', role: 'Staff', password: '' });
+    //   loadTabData('staff');
+    // } catch (err: any) {
+    //   showToast(err.message, true);
+    // }
   };
 
   const handleDeleteStaff = async (id: string) => {
     if (!confirm('স্টাফ অ্যাকাউন্টটি মুছে ফেলতে চান?')) return;
-    try {
-      await api.deleteStaff(id);
-      showToast('স্টাফ ডিলিট হয়েছে');
-      loadTabData('staff');
-    } catch (err: any) {
-      showToast(err.message, true);
-    }
+    // try {
+    //   await api.deleteStaff(id);
+    //   showToast('স্টাফ ডিলিট হয়েছে');
+    //   loadTabData('staff');
+    // } catch (err: any) {
+    //   showToast(err.message, true);
+    // }
   };
 
   // Backup & Restore
@@ -553,17 +553,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, onL
 
     const reader = new FileReader();
     reader.onload = async (event) => {
-      try {
-        const json = JSON.parse(event.target?.result as string);
-        const res = await api.restoreBackup(json);
-        if (res.success) {
-          showToast('ডাটা সফলভাবে রিস্টোর হয়েছে!');
-          loadTabData(activeTab);
-          onRefreshPublicData();
-        }
-      } catch (err: any) {
-        showToast('অবৈধ ব্যাকআপ ফাইল।', true);
-      }
+      // try {
+      //   const json = JSON.parse(event.target?.result as string);
+      //   const res = await api.restoreBackup(json);
+      //   if (res.success) {
+      //     showToast('ডাটা সফলভাবে রিস্টোর হয়েছে!');
+      //     loadTabData(activeTab);
+      //     onRefreshPublicData();
+      //   }
+      // } catch (err: any) {
+      //   showToast('অবৈধ ব্যাকআপ ফাইল।', true);
+      // }
     };
     reader.readAsText(file);
   };
@@ -819,7 +819,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, onL
 
               {/* Filters */}
               <div className='bg-white p-4 rounded-2xl border border-gray-200 shadow-xs flex flex-wrap items-center gap-3'>
-                <div className='flex-1 min-w-[200px] relative'>
+                <div className='flex-1 min-w-50 relative'>
                   <input
                     type='text'
                     placeholder='আইডি, গ্রাহকের নাম, ফোন বা TrxID...'

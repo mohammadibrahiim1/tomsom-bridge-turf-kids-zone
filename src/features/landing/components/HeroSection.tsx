@@ -1,6 +1,7 @@
 import React from 'react';
 import { CalendarCheck, Sparkles, MapPin, Trophy, ShieldCheck, Clock, ArrowRight } from 'lucide-react';
 import { HeroSectionProps } from '../landingTypes/hero.types';
+import { Link } from '@tanstack/react-router';
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   settings,
@@ -40,7 +41,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <section
       id='hero-section'
-      className='relative bg-gradient-to-b from-white via-red-50/20 to-white text-gray-900 border-b border-gray-200 overflow-hidden'
+      className='relative bg-linear-to-b from-white via-red-50/20 to-white text-gray-900 border-b border-gray-200 overflow-hidden'
     >
       {/* Decorative ambient blobs */}
       <div className='absolute top-0 right-0 w-96 h-96 bg-red-100/60 rounded-full blur-3xl -z-10 pointer-events-none transform translate-x-1/3 -translate-y-1/3' />
@@ -74,8 +75,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
             {/* Action Buttons */}
             <div className='pt-2 flex flex-wrap items-center gap-3.5'>
-              <button
-                type='button'
+              <Link
+                to='/booking'
                 id='hero-book-now-btn'
                 onClick={handleBooking}
                 className='inline-flex items-center justify-center px-7 py-4 bg-red-600 hover:bg-red-700 active:scale-95 text-white font-bold text-base sm:text-lg rounded-2xl shadow-lg hover:shadow-red-600/30 transition-all cursor-pointer'
@@ -83,7 +84,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 <CalendarCheck className='w-5 h-5 mr-2' />
                 {settings?.heroBookingBtnText || 'এখনই বুক করুন'}
                 <ArrowRight className='w-4 h-4 ml-1.5' />
-              </button>
+              </Link>
 
               <button
                 type='button'
@@ -122,7 +123,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 alt='টমছম ব্রিজ টার্ফ গ্রাউন্ড'
                 className='w-full h-80 sm:h-96 object-cover object-center'
               />
-              <div className='absolute inset-0 bg-gradient-to-t from-gray-950/70 via-transparent to-transparent' />
+              <div className='absolute inset-0 bg-linear-to-t from-gray-950/70 via-transparent to-transparent' />
 
               {/* Floating Live Badge */}
               <div className='absolute top-4 left-4 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-md flex items-center space-x-2 border border-gray-100'>

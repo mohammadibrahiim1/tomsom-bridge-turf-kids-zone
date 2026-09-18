@@ -126,7 +126,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       <section className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
           {/* Turf Teaser Card */}
-          <div className='bg-gradient-to-br from-red-50 to-white p-8 rounded-3xl border border-red-100 shadow-sm flex flex-col justify-between'>
+          <div className='bg-linear-to-br from-red-50 to-white p-8 rounded-3xl border border-red-100 shadow-sm flex flex-col justify-between'>
             <div className='space-y-4'>
               <div className='inline-flex items-center px-3 py-1 bg-red-600 text-white text-xs font-bold rounded-lg'>
                 ফুটবল ও ক্রিকেট টার্ফ
@@ -167,7 +167,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
 
           {/* Kids Zone Teaser Card */}
-          <div className='bg-gradient-to-br from-amber-50 to-white p-8 rounded-3xl border border-amber-100 shadow-sm flex flex-col justify-between'>
+          <div className='bg-linear-to-br from-amber-50 to-white p-8 rounded-3xl border border-amber-100 shadow-sm flex flex-col justify-between'>
             <div className='space-y-4'>
               <div className='inline-flex items-center px-3 py-1 bg-amber-500 text-white text-xs font-bold rounded-lg'>
                 কিডস প্লে জোন ও বিনোদন
@@ -215,7 +215,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       {/* 6. Special Promo Offer Banner */}
       {activeOffer && (
         <section className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='bg-gradient-to-r from-red-600 via-red-700 to-slate-900 rounded-3xl p-6 sm:p-10 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6'>
+          <div className='bg-linear-to-r from-red-600 via-red-700 to-slate-900 rounded-3xl p-6 sm:p-10 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6'>
             <div className='space-y-2 text-center md:text-left'>
               <span className='inline-flex items-center px-3 py-1 bg-white/20 text-white rounded-full text-xs font-bold'>
                 <Sparkles className='w-3.5 h-3.5 mr-1' />
