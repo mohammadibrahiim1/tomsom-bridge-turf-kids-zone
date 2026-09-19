@@ -6,60 +6,85 @@ import { authApi } from '../features/authentication/services/authApi/authApi';
 import { setUser, logout } from '../features/authentication/services/authSlice/authSlice';
 
 interface GuardOptions {
-  allowedRoles?: Role[];
+  allowedRoles?: (Role | string)[];
 }
 
 export const ProtectedRoute = (id: string, options?: GuardOptions) => {
   return createRoute({
     getParentRoute: () => rootRoute,
     id,
+
     beforeLoad: async ({ location }) => {
-      let state = store.getState();
-      let user = state.auth.user; 
+      let currentUser = store.getState().auth.user;
 
-      // যদি রিফ্রেশ করার কারণে Redux-এ user না থাকে, তবে সার্ভার থেকে কুকি দিয়ে চেক করে নেব
-      if (!user) {
+      // 1. Redux-এ user না থাকলে server থেকে verify
+      if (!currentUser) {
         try {
-          const result = await store.dispatch(
-            authApi.endpoints.getMe.initiate(undefined, { forceRefetch: true })
-          ).unwrap();
+          const result = await store
+            .dispatch(
+              authApi.endpoints.getMe.initiate(undefined, {
+                forceRefetch: true,
+              })
+            )
+            .unwrap();
 
-          if (result?.success && result?.data) {
-            store.dispatch(setUser({ user: result.data }));
-            user = result.data;
+          currentUser = result?.data ?? null;
+
+          if (currentUser) {
+            store.dispatch(
+              setUser({
+                user: currentUser,
+              })
+            );
           }
         } catch (error) {
+          console.error('Authentication check failed:', error);
+
           store.dispatch(logout());
+          currentUser = null;
         }
       }
 
-      // ফ্রেশ স্টেট থেকে আবার চেক করা
-      const updatedState = store.getState();
-      const currentUser = updatedState.auth.user;
-      const isAuthenticated = Boolean(currentUser);
-      const isMustChangePassword = updatedState.auth.isMustChangePassword;
-
-      // ১. আনঅথেন্টিকেটেড হলে লগইন পেজে পাঠাবে
-      if (!isAuthenticated || !currentUser) {
+      // 2. Authentication check (TypeError ঠিক করার জন্য এখানে search অবজেক্টটি ক্লিন করা হয়েছে)
+      if (!currentUser) {
         throw redirect({
           to: '/login',
+          // যদি সার্চ প্যারাম পাস করতেই হয়, তবে এটিকে TanStack রাউটারের নিয়মে অবজেক্ট আকারে দিতে হবে
+          search: {
+            redirect: location.href, 
+          } as Record<string, any>,
         });
       }
 
-      // ২. পাসওয়ার্ড পরিবর্তনের প্রয়োজন হলে
-      if (isMustChangePassword && location.pathname !== '/change-password') {
+      // 3. Force password change
+      const isMustChangePassword = store.getState().auth.isMustChangePassword;
+
+      if (
+        isMustChangePassword &&
+        location.pathname !== '/change-password'
+      ) {
         throw redirect({
-          to: '/change-password' as never,
+          to: '/change-password',
         });
       }
 
-      // ৩. রোল বেইজড অ্যাক্সেস কন্ট্রোল (RBAC)
-      if (options?.allowedRoles && options.allowedRoles.length > 0 && !options.allowedRoles.includes(currentUser.role)) {
+      // 4. Role authorization
+      if (
+        options?.allowedRoles?.length &&
+        !options.allowedRoles.includes(currentUser.role)
+      ) {
+        if (currentUser.role === 'CUSTOMER') {
+          throw redirect({
+            to: '/dashboard/customer',
+          });
+        }
+
         throw redirect({
-          to: '/unauthorized' as never,
+          to: '/dashboard/adm_v1',
         });
       }
     },
+
     component: () => <Outlet />,
   });
 };

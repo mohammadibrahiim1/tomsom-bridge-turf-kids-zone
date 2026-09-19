@@ -56,7 +56,7 @@ export const authApi = baseApi.injectEndpoints({
 
 export const {
   useLoginMutation,
-  useLazyGetMeQuery,
+  useGetMeQuery,
   useLogoutMutation,
   useRegisterMutation,
   useVerifyUserMutation,

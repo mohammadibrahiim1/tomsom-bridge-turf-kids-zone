@@ -1,21 +1,20 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch } from '../../redux/store/store';
 import { logout, setUser } from '../../features/authentication/services/authSlice/authSlice';
-import { useLazyGetMeQuery } from '../../features/authentication/services/authApi/authApi';
+import { useGetMeQuery } from '../../features/authentication/services/authApi/authApi';
 
 export const AuthInitializer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const dispatch = useAppDispatch();
   
+  // Regular Query use korle component mount howar shathe shathe automatic call hoye jay
+  const { data: response, isSuccess, isError, isLoading, isFetching } = useGetMeQuery(undefined, {
+    // optional: forceRefetching ba polling bondho rakhar jonno
+  });
+
+
   
-  const [getMe, { data: response, isSuccess, isError,isLoading, isUninitialized }] = useLazyGetMeQuery();
 
   useEffect(() => {
-    getMe(undefined);
-  }, []);
-
-  
-  useEffect(() => {
-    
     if (isSuccess || isError) {
       if (isSuccess && response?.success && response?.data) {
         dispatch(setUser({ user: response.data }));
@@ -23,7 +22,7 @@ export const AuthInitializer: React.FC<{ children: React.ReactNode }> = ({ child
         dispatch(logout());
       }
 
-    
+      // Initial HTML loader remove korar logic
       const loader = document.getElementById('initial-loader');
       if (loader) {
         loader.style.opacity = '0';
@@ -34,9 +33,13 @@ export const AuthInitializer: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, [isSuccess, isError, response, dispatch]);
 
-
-  if (isLoading || isUninitialized) {
-    return null;
+  // API call cholakalin somoy children render hobe na, fole unauthorized redirect hobe na
+  if (isLoading || isFetching) {
+    return (
+      <div className='flex min-h-screen items-center justify-center bg-emerald-950'>
+        <div className='h-8 w-8 animate-spin rounded-full border-4 border-green-500 border-t-transparent' />
+      </div>
+    );
   }
 
   return <>{children}</>;

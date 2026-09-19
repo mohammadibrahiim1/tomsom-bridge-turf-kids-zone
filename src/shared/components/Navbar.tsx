@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import {
   CalendarCheck,
   Search,
@@ -8,27 +8,19 @@ import {
   MessageCircle,
   Sparkles,
   Home,
-  Tag,
-  Images,
-  Mail,
-  Info,
   LogOut,
   ChevronRight,
   ChevronDown,
   LayoutDashboard,
   LogIn,
 } from 'lucide-react';
-import type { WebsiteSettings } from '../types';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../redux/store/store';
+import { useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from '@tanstack/react-router';
-import { useNavigate } from '@tanstack/react-router';
-import { logout } from '../features/authentication/services/authSlice/authSlice';
-import { useLogoutMutation } from '../features/authentication/services/authApi/authApi';
-import { baseApi } from '../redux/baseApi/baseApi';
-import toast from 'react-hot-toast';
-import { openAuthModal } from '../redux/features/modal/modalSlice';
+import { WebsiteSettings } from '../../types';
+import { RootState } from '../../redux/store/store';
+import { useNavbar } from '../hooks/useNavbar';
+import { bottomTabRoutes, getDashboardConfig, navItems } from '../../config/navbar.config';
 
 interface NavbarProps {
   settings?: WebsiteSettings;
@@ -36,8 +28,6 @@ interface NavbarProps {
   onNavigate?: (sectionId: string) => void;
   onOpenBooking?: () => void;
   onOpenSearch?: () => void;
-  onOpenAdmin?: () => void;
-  onLogout?: () => void;
 }
 
 const defaultNavbarSettings: Partial<WebsiteSettings> = {
@@ -58,117 +48,25 @@ export const Navbar: React.FC<NavbarProps> = ({
   onNavigate,
   onOpenBooking,
   onOpenSearch,
-  onOpenAdmin,
-  onLogout,
 }) => {
   const settings = { ...defaultNavbarSettings, ...customSettings };
   const currentUser = useSelector((state: RootState) => state?.auth?.user);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
 
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  // কাস্টম হুক থেকে ফাংশন ও স্টেট কল করা হলো
+  const {
+    isMobileMenuOpen,
+    setIsMobileMenuOpen,
+    isProfileDropdownOpen,
+    setIsProfileDropdownOpen,
+    isLoggingOut,
+    dropdownRef,
+    handleItemClick,
+    handleBooking,
+    handleLogoutAction,
+  } = useNavbar({ onNavigate, onOpenBooking });
 
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Outside Click Listener for Profile Dropdown
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsProfileDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const navItems = [
-    {
-      id: 'kids-zone',
-      label: 'কিডস জোন',
-      icon: Sparkles,
-      path: '/kids-zone',
-    },
-    {
-      id: 'pricing',
-      label: 'মূল্য তালিকা',
-      icon: Tag,
-      path: '/pricing',
-    },
-    {
-      id: 'about',
-      label: 'আমাদের সম্পর্কে',
-      icon: Info,
-      path: '/about-us',
-    },
-    {
-      id: 'gallery',
-      label: 'গ্যালারি',
-      icon: Images,
-      path: '/gallery',
-    },
-    {
-      id: 'contact',
-      label: 'যোগাযোগ',
-      icon: Mail,
-      path: '/contact',
-    },
-  ];
-
-  const bottomTabRoutes = ['kids-zone', 'pricing', 'gallery'];
-
-  const handleItemClick = (id: string) => {
-    setIsMobileMenuOpen(false);
-    setIsProfileDropdownOpen(false);
-
-    if (onNavigate) {
-      onNavigate(id);
-    } else {
-      const targetId = id === 'hero' ? 'hero-section' : id;
-      const el = document.getElementById(targetId);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  };
-
-  const handleBooking = () => {
-    setIsMobileMenuOpen(false);
-    setIsProfileDropdownOpen(false);
-    if (onOpenBooking) {
-      onOpenBooking();
-    }
-  };
-
-  const [logoutApi] = useLogoutMutation();
-const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-const handleLogoutAction = async () => {
-  setIsProfileDropdownOpen(false);
-  setIsMobileMenuOpen(false);
-  setIsLoggingOut(true);
-
-  const toastId = toast.loading('Please wait...');
-
-  try {
-    await logoutApi({}).unwrap();
-  } catch (error) {
-    console.error('Logout failed on server:', error);
-  } finally {
-    
-    dispatch(logout());
-
-    
-    dispatch(baseApi.util.resetApiState());
-
-    setIsLoggingOut(false);
-
-    toast.success('See you again!', {
-      id: toastId,
-    });
-    window.location.href = '/';
-  }
-};
+  // ইউজারের রোল অনুযায়ী ড্যাশবোর্ড কনফিগারেশন ডাইনামিক করা
+  const dashboardConfig = getDashboardConfig(currentUser?.role);
 
   const rawWhatsapp = settings.whatsapp || settings.phone || '';
   const cleanWhatsappNumber = rawWhatsapp.replace(/\D/g, '');
@@ -185,7 +83,7 @@ const handleLogoutAction = async () => {
                   <Sparkles className='w-3 h-3 mr-1' />
                   ঘোষণা
                 </span>
-                <span className='text-white/95 font-medium truncate max-w-50 xs:max-w-xs sm:max-w-md lg:max-w-xl text-[11px] sm:text-xs'>
+                <span className='text-white/95 font-medium truncate max-w-50 sm:max-w-md lg:max-w-xl text-[11px] sm:text-xs'>
                   {settings?.topBarText || settings.addressBn}
                 </span>
               </div>
@@ -201,13 +99,12 @@ const handleLogoutAction = async () => {
                     {settings.phone}
                   </a>
                 )}
-                {settings.phone && cleanWhatsappNumber && <span className='text-white/40'>|</span>}
                 {cleanWhatsappNumber && (
                   <a
                     href={`https://wa.me/${cleanWhatsappNumber}`}
                     target='_blank'
                     rel='noreferrer'
-                    className='flex items-center bg-[#2E7D32] hover:bg-[#256628] text-white px-2 py-0.5 rounded font-semibold transition-colors text-[10px] sm:text-2xs shadow-xs'
+                    className='flex items-center bg-[#2E7D32] hover:bg-[#256628] text-white px-2 py-0.5 rounded font-semibold transition-colors text-[10px] shadow-xs'
                   >
                     <MessageCircle className='w-3 h-3 mr-1' />
                     হোয়াটসঅ্যাপ
@@ -220,9 +117,8 @@ const handleLogoutAction = async () => {
 
         {/* Main Navbar Header Bar */}
         <div className='max-w-8xl mx-auto px-3 sm:px-6 lg:px-8'>
-          {/* Top Row: Brand Name & User Login/Avatar Profile */}
           <div className='flex items-center justify-between h-16 xl:h-20'>
-            {/* Left: Brand Name Only */}
+            {/* Brand Logo */}
             <Link
               to='/'
               className='flex items-center space-x-2 sm:space-x-3 group cursor-pointer overflow-hidden'
@@ -244,7 +140,7 @@ const handleLogoutAction = async () => {
             {/* Desktop Navigation & Actions */}
             <div className='hidden xl:flex items-center space-x-6'>
               <nav className='flex items-center space-x-1 whitespace-nowrap'>
-                {navItems.map((item) => (
+                {navItems?.map((item) => (
                   <Link
                     key={item.id}
                     to={item.path}
@@ -273,13 +169,13 @@ const handleLogoutAction = async () => {
                 <Link
                   to='/booking'
                   onClick={handleBooking}
-                  className='inline-flex items-center px-4 py-2 bg-[#990000] hover:bg-[#800000] active:scale-95 text-white font-bold text-xs rounded-md shadow-md hover:shadow-red-900/25 transition-all cursor-pointer'
+                  className='inline-flex items-center px-4 py-2 bg-[#990000] hover:bg-[#800000] active:scale-95 text-white font-bold text-xs rounded-md shadow-md transition-all cursor-pointer'
                 >
                   <CalendarCheck className='w-4 h-4 mr-1.5' />
                   {settings.headerBookingBtnText || 'এখনই বুক করুন'}
                 </Link>
 
-                {/* Desktop User Profile Dropdown with Framer Motion */}
+                {/* User Profile / Dashboard & Logout Dropdown */}
                 {currentUser ? (
                   <div className='relative' ref={dropdownRef}>
                     <button
@@ -303,7 +199,6 @@ const handleLogoutAction = async () => {
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -10 }}
-                          transition={{ duration: 0.15, ease: 'easeOut' }}
                           className='absolute right-0 mt-2 w-60 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-50'
                         >
                           <div className='px-4 py-2.5 border-b border-slate-100 bg-slate-50/50 rounded-t-2xl'>
@@ -313,36 +208,33 @@ const handleLogoutAction = async () => {
                             </p>
                           </div>
                           <div className='p-1.5 space-y-1'>
-                            {/* Dashboard First */}
+                            {/* Dynamic Dashboard Link */}
                             <Link
-                              to={'/dashboard/adm_v1'}
+                              to={dashboardConfig.path as any}
                               className='w-full flex items-center px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-md transition-colors cursor-pointer'
                             >
                               <LayoutDashboard className='w-4 h-4 mr-2.5 text-[#2E7D32]' />
-                              ড্যাশবোর্ড
+                              {dashboardConfig.label}
                             </Link>
 
-                            {/* Logout Second */}
-                            {
-                              <button
-                                onClick={handleLogoutAction}
-                                className='w-full flex items-center px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-md transition-colors cursor-pointer'
-                              >
-                                {isLoggingOut ? (
-    <>
-      {/* একটি ছোট স্পিনার বা লোডিং টেক্সট */}
-      <span className="animate-spin w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full"></span>
-      লগআউট হচ্ছে...
-    </>
-  ) : (
-     <>
-     <LogOut className='w-4 h-4 mr-2.5 text-red-600' />
-                                লগআউট করুন </>
-  )}
-                                {/* <LogOut className='w-4 h-4 mr-2.5 text-red-600' />
-                                লগআউট করুন */}
-                              </button>
-                            }
+                            {/* Logout Action */}
+                            <button
+                              onClick={handleLogoutAction}
+                              disabled={isLoggingOut}
+                              className='w-full flex items-center px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-md transition-colors cursor-pointer'
+                            >
+                              {isLoggingOut ? (
+                                <>
+                                  <span className='animate-spin w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full mr-2'></span>
+                                  লগআউট হচ্ছে...
+                                </>
+                              ) : (
+                                <>
+                                  <LogOut className='w-4 h-4 mr-2.5 text-red-600' />
+                                  লগআউট করুন
+                                </>
+                              )}
+                            </button>
                           </div>
                         </motion.div>
                       )}
@@ -360,26 +252,23 @@ const handleLogoutAction = async () => {
               </div>
             </div>
 
-            {/* Mobile / Tablet Top Right: Avatar or Login Only */}
+            {/* Mobile Top Right Avatar/Login */}
             <div className='flex xl:hidden items-center space-x-2' ref={dropdownRef}>
               {currentUser ? (
                 <div className='relative'>
                   <button
                     onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                     className='w-9 h-9 rounded-full bg-[#2E7D32] text-white flex items-center justify-center font-black text-sm shadow-md ring-2 ring-emerald-100 cursor-pointer active:scale-95 transition-transform'
-                    title={currentUser.name}
                   >
                     {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
                   </button>
 
-                  {/* Mobile Profile Dropdown */}
                   <AnimatePresence>
                     {isProfileDropdownOpen && (
                       <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: -5 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: -5 }}
-                        transition={{ duration: 0.15 }}
                         className='absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50'
                       >
                         <div className='px-4 py-2 border-b border-slate-100 bg-slate-50 rounded-t-2xl'>
@@ -389,25 +278,20 @@ const handleLogoutAction = async () => {
                           </p>
                         </div>
                         <div className='p-1.5 space-y-1'>
-                          {/* Dashboard First */}
                           <Link
-                            to={'/dashboard/adm_v1'}
+                            to={dashboardConfig.path as any}
                             className='w-full flex items-center px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-md cursor-pointer'
                           >
                             <LayoutDashboard className='w-4 h-4 mr-2 text-[#2E7D32]' />
-                            ড্যাশবোর্ড
+                            {dashboardConfig.label}
                           </Link>
-
-                          {/* Logout Second */}
-                          {
-                            <button
-                              onClick={handleLogoutAction}
-                              className='w-full flex items-center px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-md cursor-pointer'
-                            >
-                              <LogOut className='w-4 h-4 mr-2 text-red-600' />
-                              লগআউট
-                            </button>
-                          }
+                          <button
+                            onClick={handleLogoutAction}
+                            className='w-full flex items-center px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-md cursor-pointer'
+                          >
+                            <LogOut className='w-4 h-4 mr-2 text-red-600' />
+                            লগআউট
+                          </button>
                         </div>
                       </motion.div>
                     )}
@@ -425,7 +309,7 @@ const handleLogoutAction = async () => {
             </div>
           </div>
 
-          {/* Mobile Bottom Row: Left Search & Right Booking Button */}
+          {/* Mobile Bottom Row: Search & Booking */}
           <div className='flex xl:hidden items-center justify-between gap-2 pb-2.5 pt-1 border-t border-slate-100'>
             <button
               onClick={onOpenSearch}
@@ -447,21 +331,17 @@ const handleLogoutAction = async () => {
         </div>
       </header>
 
-      {/* Mobile Bottom Drawer Slide-Up Menu with Framer Motion Animation */}
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <div className='xl:hidden fixed inset-0 z-50 flex flex-col justify-end'>
-            {/* Backdrop Overlay */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
               className='fixed inset-0 bg-slate-900/60 backdrop-blur-xs'
               onClick={() => setIsMobileMenuOpen(false)}
             />
-
-            {/* Bottom Sheet Drawer */}
             <motion.div
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
@@ -469,9 +349,7 @@ const handleLogoutAction = async () => {
               transition={{ type: 'spring', damping: 25, stiffness: 250 }}
               className='relative w-full bg-white rounded-t-3xl shadow-2xl border-t border-slate-200 p-5 space-y-4 max-h-[80vh] overflow-y-auto z-10'
             >
-              {/* Drawer Pull Bar */}
               <div className='w-12 h-1.5 bg-slate-300 rounded-full mx-auto mb-1' />
-
               <div className='flex items-center justify-between pb-2 border-b border-slate-100'>
                 <span className='text-xs font-extrabold text-slate-400 uppercase tracking-wider'>মেনু নেভিগেশন</span>
                 <button
@@ -482,7 +360,6 @@ const handleLogoutAction = async () => {
                 </button>
               </div>
 
-              {/* Navigation Items List */}
               <div className='grid grid-cols-1 gap-1.5'>
                 {navItems?.map((item) => {
                   const IconComponent = item.icon;
@@ -511,8 +388,8 @@ const handleLogoutAction = async () => {
         )}
       </AnimatePresence>
 
-      {/* Facebook-style Mobile Bottom Navigation Bar */}
-      <div className='xl:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] px-2 py-1 flex justify-around items-center'>
+      {/* Mobile Bottom Navigation Bar */}
+      <div className='xl:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-sm px-2 py-1 flex justify-around items-center'>
         <button
           onClick={() => handleItemClick('hero')}
           className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors cursor-pointer ${
@@ -523,7 +400,7 @@ const handleLogoutAction = async () => {
           <span className='text-[10px] font-black tracking-tight'>হোম</span>
         </button>
 
-        {bottomTabRoutes.map((routeId) => {
+        {bottomTabRoutes?.map((routeId) => {
           const item = navItems.find((n) => n.id === routeId);
           if (!item) return null;
           const IconComponent = item.icon;

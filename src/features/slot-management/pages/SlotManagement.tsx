@@ -16,7 +16,7 @@ const SlotManagement: React.FC = () => {
   return (
     <div className='min-h-screen text-slate-800 pb-12 antialiased'>
       {/* Header Section */}
-      <header className='relative bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white pt-12 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden shadow-2xl'>
+      <header className='relative bg-linear-to-r from-slate-900 via-indigo-950 to-slate-900 text-white pt-12 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden shadow-2xl'>
         <div className='max-w-full mx-auto relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6'>
           <div>
             <div className='inline-flex items-center space-x-2 px-3 py-1 bg-indigo-500/20 border border-indigo-400/35 rounded-full text-xs font-semibold text-indigo-300 mb-3 backdrop-blur-md'>
@@ -32,11 +32,11 @@ const SlotManagement: React.FC = () => {
           </div>
 
           <div className='flex items-center gap-3'>
-            <div className='bg-white/10 backdrop-blur-md border border-white/10 px-4 py-3 rounded-md text-center min-w-[100px]'>
+            <div className='bg-white/10 backdrop-blur-md border border-white/10 px-4 py-3 rounded-md text-center min-w-25'>
               <span className='block text-2xl font-black text-white'>{slots.length}</span>
               <span className='text-[11px] font-semibold text-slate-300 uppercase tracking-wider'>মোট স্লট</span>
             </div>
-            <div className='bg-emerald-500/20 backdrop-blur-md border border-emerald-400/30 px-4 py-3 rounded-md text-center min-w-[100px]'>
+            <div className='bg-emerald-500/20 backdrop-blur-md border border-emerald-400/30 px-4 py-3 rounded-md text-center min-w-25'>
               <span className='block text-2xl font-black text-emerald-400'>
                 {slots?.filter((slot) => slot?.status === 'AVAILABLE')?.length}
               </span>
